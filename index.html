@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tinydoom.com - SOON</title>
+    <link href="https://fonts.googleapis.com/css2?family=IM+Fell+DW+Pica:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #18171b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Animated gloom effect using a moving radial gradient */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            background: radial-gradient(ellipse at 50% 50%, rgba(60,0,80,0.18) 0%, rgba(0,0,0,0.7) 80%);
+            animation: gloom-move 12s ease-in-out infinite alternate;
+        }
+
+        @keyframes gloom-move {
+            0%   { background-position: 50% 50%; }
+            100% { background-position: 60% 60%; }
+        }
+
+        .soon-text {
+            font-family: 'IM Fell DW Pica', serif;
+            font-size: 12vw;
+            letter-spacing: 0.1em;
+            animation: purple-cycle 30s ease-in-out infinite;
+            text-shadow: 0 2px 16px #000a;
+            z-index: 1;
+            position: relative;
+            transform: rotate(-4deg);
+        }
+
+        @keyframes purple-cycle {
+            0%   { color: #a259ff; }    /* purple */
+            20%  { color: #b03060; }   /* ruby */
+            40%  { color: #b57edc; }   /* lilac */
+            60%  { color: #a259ff; }   /* purple */
+            80%  { color: #b03060; }   /* ruby */
+            100% { color: #a259ff; }   /* purple */
+        }
+    </style>
+</head>
+<body>
+    <div class="soon-text">soon</div>
+</body>
+</html> 
