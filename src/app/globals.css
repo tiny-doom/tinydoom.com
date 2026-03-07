@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+@font-face {
+	font-family: "IM Fell DW Pica";
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url("https://fonts.gstatic.com/s/imfelldwpica/v14/2sDGZGRQotv9nbn2qSl0TxXVYNw9ZA.woff2")
+		format("woff2");
+}
+
+:root {
+	--background: #18171b;
+	--foreground: #a259ff;
+}
+
+@theme inline {
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-void: #18171b;
+	--color-purple: #a259ff;
+	--color-ruby: #b03060;
+	--color-lilac: #b57edc;
+	--color-deep-purple: rgba(60, 0, 80, 0.18);
+}
+
+body {
+	background: var(--background);
+	color: var(--foreground);
+	font-family: "IM Fell DW Pica", serif;
+}
+
+@keyframes purple-cycle {
+	0% {
+		color: var(--color-purple);
+	}
+	20% {
+		color: var(--color-ruby);
+	}
+	40% {
+		color: var(--color-lilac);
+	}
+	60% {
+		color: var(--color-purple);
+	}
+	80% {
+		color: var(--color-ruby);
+	}
+	100% {
+		color: var(--color-purple);
+	}
+}
+
+@keyframes gloom-move {
+	0% {
+		background-position: 50% 50%;
+	}
+	100% {
+		background-position: 60% 60%;
+	}
+}
