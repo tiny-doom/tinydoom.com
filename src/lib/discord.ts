@@ -1,3 +1,5 @@
+import nacl from "tweetnacl";
+
 const DISCORD_API = "https://discord.com/api/v10";
 
 function botHeaders() {
@@ -110,40 +112,30 @@ export async function updateMessageAsBanned(
 	});
 }
 
-export async function verifyDiscordSignature(
+export function verifyDiscordSignature(
 	body: string,
 	signature: string | null,
 	timestamp: string | null,
-): Promise<boolean> {
+): boolean {
 	const publicKey = process.env.DISCORD_PUBLIC_KEY;
 	if (!publicKey || !signature || !timestamp) return false;
 
 	try {
-		const keyBuf = new ArrayBuffer(publicKey.length / 2);
-		const keyView = new Uint8Array(keyBuf);
-		for (let i = 0; i < publicKey.length; i += 2) {
-			keyView[i / 2] = Number.parseInt(publicKey.substring(i, i + 2), 16);
-		}
-
-		const key = await crypto.subtle.importKey(
-			"raw",
-			keyBuf,
-			{ name: "Ed25519" },
-			false,
-			["verify"],
+		return nacl.sign.detached.verify(
+			new TextEncoder().encode(timestamp + body),
+			hexToUint8Array(signature),
+			hexToUint8Array(publicKey),
 		);
-
-		const message = new TextEncoder().encode(timestamp + body);
-
-		const sigBuf = new ArrayBuffer(signature.length / 2);
-		const sigView = new Uint8Array(sigBuf);
-		for (let i = 0; i < signature.length; i += 2) {
-			sigView[i / 2] = Number.parseInt(signature.substring(i, i + 2), 16);
-		}
-
-		return await crypto.subtle.verify("Ed25519", key, sigBuf, message);
 	} catch (e) {
 		console.error("Signature verification failed:", e);
 		return false;
 	}
+}
+
+function hexToUint8Array(hex: string): Uint8Array {
+	const bytes = new Uint8Array(hex.length / 2);
+	for (let i = 0; i < hex.length; i += 2) {
+		bytes[i / 2] = Number.parseInt(hex.substring(i, i + 2), 16);
+	}
+	return bytes;
 }

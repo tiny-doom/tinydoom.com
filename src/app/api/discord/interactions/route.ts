@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
 	const timestamp = request.headers.get("x-signature-timestamp");
 
 	// Verify signature
-	const isValid = await verifyDiscordSignature(body, signature, timestamp);
+	const isValid = verifyDiscordSignature(body, signature, timestamp);
 	if (!isValid) {
 		return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
 	}
