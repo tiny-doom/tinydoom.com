@@ -1,27 +1,38 @@
 /**
- * Aggressive in-memory rate limiter with auto-banning.
+ * Smart rate limiter with abuse detection.
  *
- * - 3 requests per 5 minutes per IP (very strict)
- * - After 10 total requests in an hour, IP gets banned for 24 hours
- * - Banned IPs get an immediate 403 with no further processing
+ * Legitimate users: accepted freely as long as behavior looks human.
+ * Abusers detected by:
+ *   - Burst speed: 3+ requests within 10 seconds
+ *   - Duplicate content: same message sent more than once
+ *   - Sustained volume: 30+ requests in an hour regardless
+ *
+ * Penalties escalate: warning → throttle → 24h ban
  */
 
-interface RateLimitEntry {
-	timestamps: number[];
-	totalInHour: number;
-	hourStart: number;
+interface RequestRecord {
+	timestamp: number;
+	contentHash: string;
 }
 
-const WINDOW_MS = 5 * 60 * 1000; // 5 minutes
-const MAX_REQUESTS_PER_WINDOW = 3;
+interface IPState {
+	requests: RequestRecord[];
+	strikes: number;
+	hourStart: number;
+	hourCount: number;
+}
+
+const BURST_WINDOW_MS = 10 * 1000; // 10 seconds
+const BURST_THRESHOLD = 3;
 const HOUR_MS = 60 * 60 * 1000;
-const MAX_REQUESTS_PER_HOUR = 10;
-const BAN_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours
+const HOUR_VOLUME_LIMIT = 30;
+const BAN_DURATION_MS = 24 * 60 * 60 * 1000;
+const STRIKES_TO_BAN = 3;
+const HISTORY_WINDOW_MS = 15 * 60 * 1000; // keep 15 min of history
 
-const requests = new Map<string, RateLimitEntry>();
-const bannedIPs = new Map<string, number>(); // IP -> ban expiry timestamp
+const ipStates = new Map<string, IPState>();
+const bannedIPs = new Map<string, number>();
 
-// Clean up stale entries every 10 minutes
 const CLEANUP_INTERVAL = 10 * 60 * 1000;
 let lastCleanup = Date.now();
 
@@ -33,25 +44,35 @@ function cleanup() {
 	for (const [ip, expiry] of bannedIPs) {
 		if (now > expiry) bannedIPs.delete(ip);
 	}
-	for (const [ip, entry] of requests) {
+	for (const [ip, state] of ipStates) {
 		if (
-			entry.timestamps.length === 0 ||
-			now - entry.timestamps[entry.timestamps.length - 1] > HOUR_MS
+			state.requests.length === 0 ||
+			now - state.requests[state.requests.length - 1].timestamp >
+				HISTORY_WINDOW_MS
 		) {
-			requests.delete(ip);
+			ipStates.delete(ip);
 		}
 	}
+}
+
+function simpleHash(str: string): string {
+	let hash = 0;
+	for (let i = 0; i < str.length; i++) {
+		hash = (hash << 5) - hash + str.charCodeAt(i);
+		hash |= 0;
+	}
+	return hash.toString(36);
 }
 
 export type RateLimitResult =
 	| { allowed: true }
 	| { allowed: false; banned: boolean; retryAfterSeconds: number };
 
-export function checkRateLimit(ip: string): RateLimitResult {
+export function checkRateLimit(ip: string, content?: string): RateLimitResult {
 	cleanup();
 	const now = Date.now();
 
-	// Check ban list first
+	// Check ban list
 	const banExpiry = bannedIPs.get(ip);
 	if (banExpiry !== undefined) {
 		if (now < banExpiry) {
@@ -64,41 +85,74 @@ export function checkRateLimit(ip: string): RateLimitResult {
 		bannedIPs.delete(ip);
 	}
 
-	let entry = requests.get(ip);
-	if (!entry) {
-		entry = { timestamps: [], totalInHour: 0, hourStart: now };
-		requests.set(ip, entry);
+	let state = ipStates.get(ip);
+	if (!state) {
+		state = { requests: [], strikes: 0, hourStart: now, hourCount: 0 };
+		ipStates.set(ip, state);
 	}
 
-	// Reset hourly counter if hour has passed
-	if (now - entry.hourStart > HOUR_MS) {
-		entry.totalInHour = 0;
-		entry.hourStart = now;
+	// Reset hourly counter
+	if (now - state.hourStart > HOUR_MS) {
+		state.hourCount = 0;
+		state.hourStart = now;
 	}
 
-	// Remove timestamps outside the window
-	entry.timestamps = entry.timestamps.filter((t) => now - t < WINDOW_MS);
+	// Prune old requests
+	state.requests = state.requests.filter(
+		(r) => now - r.timestamp < HISTORY_WINDOW_MS,
+	);
 
-	// Check hourly abuse threshold -> ban
-	entry.totalInHour++;
-	if (entry.totalInHour > MAX_REQUESTS_PER_HOUR) {
-		const banUntil = now + BAN_DURATION_MS;
-		bannedIPs.set(ip, banUntil);
-		requests.delete(ip);
+	const contentHash = content ? simpleHash(content) : "";
+	state.hourCount++;
+
+	// Detection 1: Burst speed
+	const recentRequests = state.requests.filter(
+		(r) => now - r.timestamp < BURST_WINDOW_MS,
+	);
+	if (recentRequests.length >= BURST_THRESHOLD) {
+		state.strikes++;
+		if (state.strikes >= STRIKES_TO_BAN) {
+			return banIP(ip, now);
+		}
 		return {
 			allowed: false,
-			banned: true,
-			retryAfterSeconds: Math.ceil(BAN_DURATION_MS / 1000),
+			banned: false,
+			retryAfterSeconds: Math.ceil(BURST_WINDOW_MS / 1000),
 		};
 	}
 
-	// Check sliding window
-	if (entry.timestamps.length >= MAX_REQUESTS_PER_WINDOW) {
-		const oldestInWindow = entry.timestamps[0];
-		const retryAfter = Math.ceil((oldestInWindow + WINDOW_MS - now) / 1000);
-		return { allowed: false, banned: false, retryAfterSeconds: retryAfter };
+	// Detection 2: Duplicate content
+	if (
+		contentHash &&
+		state.requests.some((r) => r.contentHash === contentHash)
+	) {
+		state.strikes++;
+		if (state.strikes >= STRIKES_TO_BAN) {
+			return banIP(ip, now);
+		}
+		return {
+			allowed: false,
+			banned: false,
+			retryAfterSeconds: 60,
+		};
 	}
 
-	entry.timestamps.push(now);
+	// Detection 3: Sustained volume
+	if (state.hourCount > HOUR_VOLUME_LIMIT) {
+		return banIP(ip, now);
+	}
+
+	state.requests.push({ timestamp: now, contentHash });
 	return { allowed: true };
+}
+
+function banIP(ip: string, now: number): RateLimitResult {
+	const banUntil = now + BAN_DURATION_MS;
+	bannedIPs.set(ip, banUntil);
+	ipStates.delete(ip);
+	return {
+		allowed: false,
+		banned: true,
+		retryAfterSeconds: Math.ceil(BAN_DURATION_MS / 1000),
+	};
 }

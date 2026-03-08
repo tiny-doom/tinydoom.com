@@ -72,23 +72,7 @@ function validatePayload(
 export async function POST(request: NextRequest) {
 	const ip = getClientIP(request);
 
-	// Layer 1: In-memory rate limit (fast, no DB hit)
-	const rateResult = checkRateLimit(ip);
-	if (!rateResult.allowed) {
-		const status = rateResult.banned ? 403 : 429;
-		const message = rateResult.banned
-			? "You have been temporarily banned due to excessive requests."
-			: "Too many requests. Please try again later.";
-		return NextResponse.json(
-			{ error: message },
-			{
-				status,
-				headers: { "Retry-After": String(rateResult.retryAfterSeconds) },
-			},
-		);
-	}
-
-	// Layer 2: Persistent DB ban check
+	// Layer 1: Persistent DB ban check
 	const [existingBan] = await db
 		.select()
 		.from(schema.bans)
@@ -116,6 +100,22 @@ export async function POST(request: NextRequest) {
 	}
 
 	const { message, game, contact } = validation.data;
+
+	// Layer 2: Smart rate limit (checks content for duplicates + burst detection)
+	const rateResult = checkRateLimit(ip, message);
+	if (!rateResult.allowed) {
+		const status = rateResult.banned ? 403 : 429;
+		const msg = rateResult.banned
+			? "You have been temporarily banned due to excessive requests."
+			: "Too many requests. Please try again later.";
+		return NextResponse.json(
+			{ error: msg },
+			{
+				status,
+				headers: { "Retry-After": String(rateResult.retryAfterSeconds) },
+			},
+		);
+	}
 
 	// Store in database
 	const [inserted] = await db

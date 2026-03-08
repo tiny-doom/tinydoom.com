@@ -1,10 +1,8 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
+import { beforeEach, describe, expect, test } from "bun:test";
 
-// We need to re-import fresh each test to reset the in-memory state
 let checkRateLimit: typeof import("@/lib/rate-limit").checkRateLimit;
 
 beforeEach(async () => {
-	// Dynamic import to get fresh module state — clear the module cache first
 	const resolvedPath = require.resolve("../src/lib/rate-limit");
 	delete require.cache[resolvedPath];
 	const mod = await import("../src/lib/rate-limit");
@@ -13,62 +11,82 @@ beforeEach(async () => {
 
 describe("rate limiter", () => {
 	test("allows first request", () => {
-		const result = checkRateLimit("1.2.3.4");
-		expect(result.allowed).toBe(true);
+		expect(checkRateLimit("1.2.3.4", "hello").allowed).toBe(true);
 	});
 
-	test("allows up to 3 requests in a window", () => {
-		expect(checkRateLimit("1.2.3.4").allowed).toBe(true);
-		expect(checkRateLimit("1.2.3.4").allowed).toBe(true);
-		expect(checkRateLimit("1.2.3.4").allowed).toBe(true);
+	test("allows requests under burst threshold with unique content", () => {
+		expect(checkRateLimit("1.2.3.4", "first message").allowed).toBe(true);
+		expect(checkRateLimit("1.2.3.4", "second message").allowed).toBe(true);
 	});
 
-	test("blocks 4th request in same window", () => {
-		checkRateLimit("1.2.3.4");
-		checkRateLimit("1.2.3.4");
-		checkRateLimit("1.2.3.4");
-		const result = checkRateLimit("1.2.3.4");
+	test("blocks duplicate content", () => {
+		expect(checkRateLimit("1.2.3.4", "same message").allowed).toBe(true);
+		const result = checkRateLimit("1.2.3.4", "same message");
 		expect(result.allowed).toBe(false);
 		if (!result.allowed) {
 			expect(result.banned).toBe(false);
-			expect(result.retryAfterSeconds).toBeGreaterThan(0);
 		}
 	});
 
-	test("different IPs have independent limits", () => {
-		checkRateLimit("1.1.1.1");
-		checkRateLimit("1.1.1.1");
-		checkRateLimit("1.1.1.1");
-		// 1.1.1.1 is now at limit
-		const blocked = checkRateLimit("1.1.1.1");
-		expect(blocked.allowed).toBe(false);
-
-		// 2.2.2.2 should still be fine
-		const allowed = checkRateLimit("2.2.2.2");
-		expect(allowed.allowed).toBe(true);
+	test("blocks burst of rapid requests", () => {
+		checkRateLimit("1.2.3.4", "msg1");
+		checkRateLimit("1.2.3.4", "msg2");
+		checkRateLimit("1.2.3.4", "msg3");
+		// 4th request within the burst window should be blocked
+		const result = checkRateLimit("1.2.3.4", "msg4");
+		expect(result.allowed).toBe(false);
+		if (!result.allowed) {
+			expect(result.banned).toBe(false);
+		}
 	});
 
-	test("bans IP after exceeding hourly threshold", () => {
-		// Exceed 10 total requests in an hour (even if rate-limited, they still count)
-		for (let i = 0; i < 11; i++) {
-			checkRateLimit("abuser");
-		}
-		const result = checkRateLimit("abuser");
+	test("different IPs are independent", () => {
+		checkRateLimit("1.1.1.1", "same message");
+		const dup = checkRateLimit("1.1.1.1", "same message");
+		expect(dup.allowed).toBe(false);
+
+		// Different IP with same content is fine
+		expect(checkRateLimit("2.2.2.2", "same message").allowed).toBe(true);
+	});
+
+	test("bans after repeated violations (3 strikes)", () => {
+		// Strike 1: duplicate
+		checkRateLimit("abuser", "dup");
+		checkRateLimit("abuser", "dup");
+		// Strike 2: another duplicate
+		checkRateLimit("abuser", "dup2");
+		checkRateLimit("abuser", "dup2");
+		// Strike 3: another duplicate -> ban
+		checkRateLimit("abuser", "dup3");
+		const result = checkRateLimit("abuser", "dup3");
 		expect(result.allowed).toBe(false);
 		if (!result.allowed) {
 			expect(result.banned).toBe(true);
-			// 24 hour ban
 			expect(result.retryAfterSeconds).toBeGreaterThan(60 * 60);
 		}
 	});
 
-	test("banned IP stays banned on subsequent requests", () => {
-		// Get banned first
-		for (let i = 0; i < 12; i++) {
-			checkRateLimit("repeat-offender");
+	test("banned IP stays banned", () => {
+		// Get banned via strikes
+		checkRateLimit("bad-actor", "a");
+		checkRateLimit("bad-actor", "a");
+		checkRateLimit("bad-actor", "b");
+		checkRateLimit("bad-actor", "b");
+		checkRateLimit("bad-actor", "c");
+		checkRateLimit("bad-actor", "c");
+
+		const result = checkRateLimit("bad-actor", "new unique message");
+		expect(result.allowed).toBe(false);
+		if (!result.allowed) {
+			expect(result.banned).toBe(true);
 		}
-		// Should still be banned
-		const result = checkRateLimit("repeat-offender");
+	});
+
+	test("bans after sustained volume regardless of content", () => {
+		for (let i = 0; i < 31; i++) {
+			checkRateLimit("spammer", `unique message number ${i}`);
+		}
+		const result = checkRateLimit("spammer", "one more");
 		expect(result.allowed).toBe(false);
 		if (!result.allowed) {
 			expect(result.banned).toBe(true);
