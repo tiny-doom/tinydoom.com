@@ -83,7 +83,7 @@ describe("rate limiter", () => {
 	});
 
 	test("bans after sustained volume regardless of content", () => {
-		for (let i = 0; i < 31; i++) {
+		for (let i = 0; i < 51; i++) {
 			checkRateLimit("spammer", `unique message number ${i}`);
 		}
 		const result = checkRateLimit("spammer", "one more");

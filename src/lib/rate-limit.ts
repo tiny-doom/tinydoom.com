@@ -5,7 +5,7 @@
  * Abusers detected by:
  *   - Burst speed: 3+ requests within 10 seconds
  *   - Duplicate content: same message sent more than once
- *   - Sustained volume: 30+ requests in an hour regardless
+ *   - Sustained volume: 50+ requests in an hour regardless
  *
  * Penalties escalate: warning → throttle → 24h ban
  */
@@ -25,7 +25,7 @@ interface IPState {
 const BURST_WINDOW_MS = 10 * 1000; // 10 seconds
 const BURST_THRESHOLD = 3;
 const HOUR_MS = 60 * 60 * 1000;
-const HOUR_VOLUME_LIMIT = 30;
+const HOUR_VOLUME_LIMIT = 50;
 const BAN_DURATION_MS = 24 * 60 * 60 * 1000;
 const STRIKES_TO_BAN = 3;
 const HISTORY_WINDOW_MS = 15 * 60 * 1000; // keep 15 min of history
