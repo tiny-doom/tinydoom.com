@@ -19,20 +19,17 @@ describe("rate limiter", () => {
 		expect(checkRateLimit("1.2.3.4", "second message").allowed).toBe(true);
 	});
 
-	test("blocks duplicate content", () => {
-		expect(checkRateLimit("1.2.3.4", "same message").allowed).toBe(true);
-		const result = checkRateLimit("1.2.3.4", "same message");
+	test("allows sending same message twice, blocks on 3rd", () => {
+		expect(checkRateLimit("1.2.3.4", "same").allowed).toBe(true);
+		expect(checkRateLimit("1.2.3.4", "same").allowed).toBe(true);
+		const result = checkRateLimit("1.2.3.4", "same");
 		expect(result.allowed).toBe(false);
-		if (!result.allowed) {
-			expect(result.banned).toBe(false);
-		}
 	});
 
 	test("blocks burst of rapid requests", () => {
 		checkRateLimit("1.2.3.4", "msg1");
 		checkRateLimit("1.2.3.4", "msg2");
 		checkRateLimit("1.2.3.4", "msg3");
-		// 4th request within the burst window should be blocked
 		const result = checkRateLimit("1.2.3.4", "msg4");
 		expect(result.allowed).toBe(false);
 		if (!result.allowed) {
@@ -41,55 +38,59 @@ describe("rate limiter", () => {
 	});
 
 	test("different IPs are independent", () => {
-		checkRateLimit("1.1.1.1", "same message");
-		const dup = checkRateLimit("1.1.1.1", "same message");
-		expect(dup.allowed).toBe(false);
+		checkRateLimit("1.1.1.1", "msg");
+		checkRateLimit("1.1.1.1", "msg");
+		checkRateLimit("1.1.1.1", "msg");
+		expect(checkRateLimit("1.1.1.1", "msg").allowed).toBe(false);
 
-		// Different IP with same content is fine
-		expect(checkRateLimit("2.2.2.2", "same message").allowed).toBe(true);
+		expect(checkRateLimit("2.2.2.2", "msg").allowed).toBe(true);
 	});
 
-	test("bans after repeated violations (3 strikes)", () => {
-		// Strike 1: duplicate
-		checkRateLimit("abuser", "dup");
-		checkRateLimit("abuser", "dup");
-		// Strike 2: another duplicate
-		checkRateLimit("abuser", "dup2");
-		checkRateLimit("abuser", "dup2");
-		// Strike 3: another duplicate -> ban
-		checkRateLimit("abuser", "dup3");
-		const result = checkRateLimit("abuser", "dup3");
-		expect(result.allowed).toBe(false);
-		if (!result.allowed) {
-			expect(result.banned).toBe(true);
-			expect(result.retryAfterSeconds).toBeGreaterThan(60 * 60);
+	test("3 strikes = temp ban (not permaban)", () => {
+		// 3 rapid unique messages = strike 1 (burst at msg4)
+		checkRateLimit("striker", "a");
+		checkRateLimit("striker", "b");
+		checkRateLimit("striker", "c");
+		const strike1 = checkRateLimit("striker", "d");
+		expect(strike1.allowed).toBe(false);
+		if (!strike1.allowed) expect(strike1.banned).toBe(false);
+
+		// Keep going — strike 2 (still trying while rate limited)
+		const strike2 = checkRateLimit("striker", "e");
+		expect(strike2.allowed).toBe(false);
+
+		// Strike 3 -> temp ban
+		const strike3 = checkRateLimit("striker", "f");
+		expect(strike3.allowed).toBe(false);
+		if (!strike3.allowed) {
+			expect(strike3.banned).toBe(true);
+			expect(strike3.permaban).toBe(false);
 		}
 	});
 
-	test("banned IP stays banned", () => {
-		// Get banned via strikes
-		checkRateLimit("bad-actor", "a");
-		checkRateLimit("bad-actor", "a");
-		checkRateLimit("bad-actor", "b");
-		checkRateLimit("bad-actor", "b");
-		checkRateLimit("bad-actor", "c");
-		checkRateLimit("bad-actor", "c");
-
-		const result = checkRateLimit("bad-actor", "new unique message");
+	test("5 strikes = permaban", () => {
+		// Accumulate strikes rapidly
+		for (let i = 0; i < 8; i++) {
+			checkRateLimit("perma", `msg${i}`);
+		}
+		// Should have escalated through temp ban to permaban
+		const result = checkRateLimit("perma", "final");
 		expect(result.allowed).toBe(false);
 		if (!result.allowed) {
 			expect(result.banned).toBe(true);
+			expect(result.permaban).toBe(true);
 		}
 	});
 
-	test("bans after sustained volume regardless of content", () => {
-		for (let i = 0; i < 51; i++) {
-			checkRateLimit("spammer", `unique message number ${i}`);
+	test("permabanned IP stays permabanned", () => {
+		for (let i = 0; i < 10; i++) {
+			checkRateLimit("perma2", `msg${i}`);
 		}
-		const result = checkRateLimit("spammer", "one more");
+		const result = checkRateLimit("perma2", "new unique message");
 		expect(result.allowed).toBe(false);
 		if (!result.allowed) {
 			expect(result.banned).toBe(true);
+			expect(result.permaban).toBe(true);
 		}
 	});
 });

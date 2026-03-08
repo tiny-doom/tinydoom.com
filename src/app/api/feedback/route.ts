@@ -104,9 +104,22 @@ export async function POST(request: NextRequest) {
 	// Layer 2: Smart rate limit (checks content for duplicates + burst detection)
 	const rateResult = checkRateLimit(ip, message);
 	if (!rateResult.allowed) {
+		// 5 strikes: write permaban to DB
+		if (rateResult.permaban) {
+			await db
+				.insert(schema.bans)
+				.values({
+					ip,
+					reason: "Automatic permaban: 5 rate limit strikes",
+					bannedBy: "system",
+					bannedByName: "rate-limiter",
+				})
+				.onConflictDoNothing();
+		}
+
 		const status = rateResult.banned ? 403 : 429;
 		const msg = rateResult.banned
-			? "You have been temporarily banned due to excessive requests."
+			? "You have been banned due to excessive requests."
 			: "Too many requests. Please try again later.";
 		return NextResponse.json(
 			{ error: msg },
