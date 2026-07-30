@@ -139,25 +139,22 @@ body {
 
 .hammerbound-confirm-button {
 	display: inline-flex;
-	width: min(112px, calc(100vw - 2rem));
-	min-height: 36px;
+	width: min(176px, calc(100vw - 2rem));
+	height: 56px;
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
 	border: 8px solid transparent;
 	border-image:
-		url("/art/hammerbound/confirm-normal.png") 4 fill / 8px / 0 stretch;
+		url("/art/hammerbound/confirm-normal.png") 4 fill / 8px / 0 repeat;
 	background: transparent;
-	padding: 0 1rem;
-	color: #2e222f;
-	font-family: "Hammerbound Pixellari", sans-serif;
-	font-size: 16px;
-	line-height: 1;
+	padding: 0 10px;
 	image-rendering: pixelated;
 }
 
 .hammerbound-confirm-label {
-	transform: translateY(0.14em);
+	display: block;
+	image-rendering: pixelated;
 }
 
 .hammerbound-confirm-button:hover:not(:disabled),

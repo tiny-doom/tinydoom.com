@@ -153,10 +153,20 @@ export default function Home() {
 						form="playtest-signup-letter"
 						disabled={status === "sending" || status === "sent"}
 						className="hammerbound-confirm-button"
+						aria-label={status === "sending" ? "Sending" : "Send"}
 					>
-						<span className="hammerbound-confirm-label">
-							{status === "sending" ? "SENDING..." : "SEND"}
-						</span>
+						<Image
+							src={
+								status === "sending"
+									? "/art/hammerbound/sending-label.png"
+									: "/art/hammerbound/send-label.png"
+							}
+							alt=""
+							width={status === "sending" ? 120 : 60}
+							height={18}
+							className="hammerbound-confirm-label"
+							unoptimized
+						/>
 					</button>
 					<p aria-live="polite" className="send-error">
 						{status === "error" && error}
