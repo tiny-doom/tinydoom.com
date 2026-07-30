@@ -120,6 +120,13 @@ body {
 	width: 100%;
 }
 
+.postcard-followup {
+	display: block;
+	margin-top: 0.25rem;
+	font-size: 0.7em;
+	-webkit-text-stroke-width: 2pt;
+}
+
 .letter-input {
 	border: 0;
 	border-bottom: 2px dashed #6e4c76;

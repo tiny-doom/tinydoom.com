@@ -139,7 +139,12 @@ export default function Home() {
 							Can you send me a key?
 						</p>
 
-						<p>Thank you! {"<3"}</p>
+						<p>
+							Thank you! {"<3"}
+							<small className="postcard-followup">
+								We will contact you soon!
+							</small>
+						</p>
 					</div>
 				</form>
 
