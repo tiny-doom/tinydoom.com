@@ -50,7 +50,12 @@ export default function Home() {
 				<form
 					id="playtest-signup-letter"
 					onSubmit={submitLetter}
-					className={`playtest-letter playtest-postcard relative w-full -rotate-[0.35deg] shadow-[0_28px_80px_rgba(15,3,20,0.55)] ${status === "sent" ? "postcard-whoosh" : ""}`}
+					autoComplete="off"
+					data-1p-ignore
+					data-lpignore="true"
+					data-bwignore
+					data-protonpass-ignore="true"
+					className={`playtest-letter playtest-postcard relative w-full -rotate-[0.35deg] ${status === "sent" ? "postcard-whoosh" : ""}`}
 				>
 					<div className="postcard-copy relative">
 						<p>
@@ -64,13 +69,16 @@ export default function Home() {
 								<input
 									type="text"
 									name="name"
-									autoComplete="name"
+									autoComplete="off"
+									data-1p-ignore
+									data-lpignore="true"
+									data-bwignore
+									data-protonpass-ignore="true"
 									required
 									maxLength={100}
 									className="letter-input postcard-input"
 								/>
 							</label>
-							.
 						</p>
 
 						<p>
@@ -106,6 +114,10 @@ export default function Home() {
 									name="steam_id"
 									inputMode="numeric"
 									autoComplete="off"
+									data-1p-ignore
+									data-lpignore="true"
+									data-bwignore
+									data-protonpass-ignore="true"
 									required
 									minLength={17}
 									maxLength={17}
@@ -114,7 +126,6 @@ export default function Home() {
 									className="letter-input postcard-input"
 								/>
 							</label>
-							.
 						</p>
 
 						<p>
