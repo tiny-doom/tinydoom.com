@@ -87,10 +87,7 @@ export default function Home() {
 									className="letter-input postcard-input"
 								/>
 							</label>
-						</p>
-
-						<p>
-							My{" "}
+							and my{" "}
 							<span className="steam-id-help">
 								<button
 									type="button"
