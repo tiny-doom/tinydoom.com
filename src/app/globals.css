@@ -122,7 +122,7 @@ body {
 
 .letter-input {
 	border: 0;
-	border-bottom: 2px dotted #6e4c76;
+	border-bottom: 2px dashed #6e4c76;
 	background: transparent;
 	padding: 0 0.5rem;
 	color: #38251f;
@@ -144,10 +144,10 @@ body {
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
-	border: 8px solid transparent;
-	border-image:
-		url("/art/hammerbound/confirm-normal.png") 4 fill / 8px / 0 repeat;
-	background: transparent;
+	border: 0;
+	background:
+		url("/art/hammerbound/confirm-normal-large.png") center / 100% 100%
+		no-repeat;
 	padding: 0 10px;
 	image-rendering: pixelated;
 }
@@ -159,12 +159,12 @@ body {
 
 .hammerbound-confirm-button:hover:not(:disabled),
 .hammerbound-confirm-button:focus-visible:not(:disabled) {
-	border-image-source: url("/art/hammerbound/confirm-hover.png");
+	background-image: url("/art/hammerbound/confirm-hover-large.png");
 }
 
 .hammerbound-confirm-button:active:not(:disabled) {
 	transform: translateY(3px);
-	border-image-source: url("/art/hammerbound/confirm-pressed.png");
+	background-image: url("/art/hammerbound/confirm-pressed-large.png");
 }
 
 .hammerbound-confirm-button:focus-visible {
