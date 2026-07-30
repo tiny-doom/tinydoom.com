@@ -78,6 +78,27 @@ export async function postFeedbackMessage(
 	return data.id;
 }
 
+export async function postTelemetryReportMessage(
+	embed: Record<string, unknown>,
+): Promise<void> {
+	const channelId = process.env.TELEMETRY_DISCORD_CHANNEL_ID;
+	if (!channelId) {
+		throw new Error("TELEMETRY_DISCORD_CHANNEL_ID is not configured");
+	}
+
+	const response = await fetch(
+		`${DISCORD_API}/channels/${channelId}/messages`,
+		{
+			method: "POST",
+			headers: botHeaders(),
+			body: JSON.stringify({ embeds: [embed] }),
+		},
+	);
+	if (!response.ok) {
+		throw new Error(`Discord telemetry report failed with ${response.status}`);
+	}
+}
+
 export async function deleteMessage(messageId: string): Promise<boolean> {
 	const channelId = process.env.DISCORD_CHANNEL_ID;
 	if (!channelId) return false;
