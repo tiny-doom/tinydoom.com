@@ -78,6 +78,47 @@ export async function postFeedbackMessage(
 	return data.id;
 }
 
+export interface PlaytestSignupEmbed {
+	name: string;
+	steamId: string;
+}
+
+export async function postPlaytestSignupMessage(
+	signup: PlaytestSignupEmbed,
+): Promise<void> {
+	const channelId = process.env.PLAYTEST_DISCORD_CHANNEL_ID;
+	if (!channelId) {
+		throw new Error("PLAYTEST_DISCORD_CHANNEL_ID is not configured");
+	}
+
+	const response = await fetch(
+		`${DISCORD_API}/channels/${channelId}/messages`,
+		{
+			method: "POST",
+			headers: botHeaders(),
+			body: JSON.stringify({
+				embeds: [
+					{
+						title: "Hammerbound playtest signup",
+						color: 0xfb6b1d,
+						fields: [
+							{ name: "Name", value: signup.name, inline: true },
+							{
+								name: "Steam ID",
+								value: `[${signup.steamId}](https://steamcommunity.com/profiles/${signup.steamId})`,
+								inline: true,
+							},
+						],
+					},
+				],
+			}),
+		},
+	);
+	if (!response.ok) {
+		throw new Error(`Discord playtest signup failed with ${response.status}`);
+	}
+}
+
 export async function postTelemetryReportMessage(
 	embed: Record<string, unknown>,
 ): Promise<void> {

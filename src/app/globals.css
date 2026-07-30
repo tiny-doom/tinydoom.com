@@ -59,3 +59,188 @@ body {
 		background-position: 60% 60%;
 	}
 }
+
+.letter-input {
+	border: 0;
+	border-bottom: 2px solid #6e4c76;
+	background: transparent;
+	padding: 0 0.5rem;
+	color: #38251f;
+	font: inherit;
+	line-height: 1.2;
+	text-align: center;
+	outline: none;
+	transition: border-color 150ms ease;
+}
+
+.letter-input:focus {
+	border-color: #a259ff;
+}
+
+.star-field {
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+	overflow: hidden;
+}
+
+.void-star {
+	position: absolute;
+	display: grid;
+	width: 24px;
+	height: 24px;
+	place-items: center;
+	opacity: 0.7;
+	transition-property: opacity;
+	transition-timing-function: cubic-bezier(0.333333, 0, 0.666667, 1);
+}
+
+.void-star-frame {
+	display: block;
+	background-image: url("/art/hammerbound/sparkles-dark-bg.png");
+	background-repeat: no-repeat;
+	image-rendering: pixelated;
+}
+
+.void-star-twinkling {
+	animation: void-star-twinkle 1.6s linear;
+}
+
+@keyframes void-star-twinkle {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	10%,
+	90% {
+		opacity: 0.83;
+	}
+	20%,
+	80% {
+		opacity: 0.677;
+	}
+	30%,
+	70% {
+		opacity: 0.555;
+	}
+	40%,
+	60% {
+		opacity: 0.477;
+	}
+	50% {
+		opacity: 0.45;
+	}
+}
+
+.steam-id-help {
+	position: relative;
+	display: inline-block;
+}
+
+.steam-id-trigger {
+	cursor: help;
+	border: 0;
+	border-bottom: 2px dotted #7b2eb0;
+	background: transparent;
+	padding: 0;
+	color: inherit;
+	font: inherit;
+	line-height: inherit;
+}
+
+.steam-id-trigger:focus-visible {
+	outline: 2px solid #a259ff;
+	outline-offset: 3px;
+}
+
+.steam-id-tooltip {
+	position: absolute;
+	bottom: calc(100% + 0.25rem);
+	left: 50%;
+	z-index: 30;
+	display: flex;
+	visibility: hidden;
+	width: 320px;
+	height: 160px;
+	max-width: calc(100vw - 2rem);
+	flex-direction: column;
+	justify-content: center;
+	gap: 0.15rem;
+	padding: 1.8rem 2.3rem;
+	transform: translate(-50%, 0.5rem);
+	opacity: 0;
+	color: #fff8ff;
+	font-family: "IM Fell DW Pica", serif;
+	font-size: 0.88rem;
+	line-height: 1.25;
+	text-align: left;
+	text-shadow: 0 1px #1e0d25;
+	transition:
+		opacity 120ms ease,
+		transform 120ms ease,
+		visibility 120ms;
+}
+
+.steam-id-tooltip::before {
+	position: absolute;
+	z-index: -1;
+	inset: 0;
+	background-image: url("/art/blackstar/tooltip.png");
+	background-position: 0 0;
+	background-repeat: no-repeat;
+	background-size: 1000% 100%;
+	content: "";
+	image-rendering: pixelated;
+	animation: blackstar-tooltip 1.8181818s steps(10, end) infinite;
+}
+
+.steam-id-tooltip strong {
+	font-size: 1rem;
+}
+
+.steam-id-tooltip code {
+	color: #ffb9ef;
+	font-size: 0.8rem;
+}
+
+.steam-id-help:hover .steam-id-tooltip,
+.steam-id-help:focus-within .steam-id-tooltip {
+	visibility: visible;
+	transform: translate(-50%, 0);
+	opacity: 1;
+}
+
+@keyframes blackstar-tooltip {
+	to {
+		background-position-x: 111.111111%;
+	}
+}
+
+@media (max-width: 640px) {
+	.steam-id-tooltip {
+		position: fixed;
+		top: 50%;
+		bottom: auto;
+		left: 50%;
+		width: min(320px, calc(100vw - 2rem));
+		height: min(160px, calc((100vw - 2rem) / 2));
+		padding: 1.5rem 2rem;
+		transform: translate(-50%, calc(-50% + 0.5rem));
+		font-size: 0.78rem;
+	}
+
+	.steam-id-help:hover .steam-id-tooltip,
+	.steam-id-help:focus-within .steam-id-tooltip {
+		transform: translate(-50%, -50%);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.void-star,
+	.steam-id-tooltip,
+	.steam-id-tooltip::before {
+		transition: none;
+		animation: none;
+	}
+}

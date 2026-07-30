@@ -30,3 +30,8 @@ bun run db:studio  # open Drizzle Studio
 The Hammerbound API contract lives in [`docs/telemetry.md`](docs/telemetry.md).
 The weekly Discord cron needs `CRON_SECRET`, `DISCORD_BOT_TOKEN`, and
 `TELEMETRY_DISCORD_CHANNEL_ID`. Preview builds migrate their isolated Neon branch.
+
+## Playtesting
+
+The signup form posts validated names and 17-digit Steam IDs to Discord. It needs
+`DISCORD_BOT_TOKEN` and `PLAYTEST_DISCORD_CHANNEL_ID`.
