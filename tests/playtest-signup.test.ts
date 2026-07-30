@@ -6,7 +6,7 @@ import {
 
 const validSignup = {
 	name: "Lovely Person",
-	steam_id: "76561198012345678",
+	email: "lovely@example.com",
 };
 
 function request(body: unknown, contentType = "application/json") {
@@ -23,20 +23,19 @@ function request(body: unknown, contentType = "application/json") {
 const allow = () => ({ allowed: true }) as const;
 
 describe("playtest signup", () => {
-	test("accepts a name and 17-digit Steam ID", () => {
+	test("accepts a name and email address", () => {
 		expect(validatePlaytestSignup(validSignup)).toEqual({
 			valid: true,
 			data: {
 				name: "Lovely Person",
-				steamId: "76561198012345678",
+				email: "lovely@example.com",
 			},
 		});
 	});
 
-	test("rejects malformed Steam IDs and extra fields", () => {
+	test("rejects malformed emails and extra fields", () => {
 		expect(
-			validatePlaytestSignup({ ...validSignup, steam_id: "not-a-steam-id" })
-				.valid,
+			validatePlaytestSignup({ ...validSignup, email: "not-an-email" }).valid,
 		).toBe(false);
 		expect(
 			validatePlaytestSignup({ ...validSignup, contact: "nope" }).valid,
@@ -44,7 +43,7 @@ describe("playtest signup", () => {
 	});
 
 	test("delivers a valid signup", async () => {
-		let delivered: { name: string; steamId: string } | undefined;
+		let delivered: { name: string; email: string } | undefined;
 		const post = createPlaytestSignupPost(async (signup) => {
 			delivered = signup;
 		}, allow);
@@ -54,7 +53,7 @@ describe("playtest signup", () => {
 		expect(await response.json()).toEqual({ success: true });
 		expect(delivered).toEqual({
 			name: "Lovely Person",
-			steamId: "76561198012345678",
+			email: "lovely@example.com",
 		});
 	});
 

@@ -7,7 +7,9 @@ import { checkRateLimit, type RateLimitResult } from "@/lib/rate-limit";
 
 const MAX_BODY_LENGTH = 1024;
 const MAX_NAME_LENGTH = 100;
-const STEAM_ID_PATTERN = /^\d{17}$/;
+const MAX_EMAIL_LENGTH = 254;
+const EMAIL_PATTERN =
+	/^[a-z0-9._%+-]+@[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+$/i;
 
 export type PlaytestSignup = PlaytestSignupEmbed;
 
@@ -27,9 +29,9 @@ export function validatePlaytestSignup(body: unknown): ValidationResult {
 	if (
 		Object.keys(record).length !== 2 ||
 		!("name" in record) ||
-		!("steam_id" in record)
+		!("email" in record)
 	) {
-		return { valid: false, error: "Name and Steam ID are required" };
+		return { valid: false, error: "Name and email are required" };
 	}
 
 	const name = typeof record.name === "string" ? record.name.trim() : "";
@@ -40,14 +42,12 @@ export function validatePlaytestSignup(body: unknown): ValidationResult {
 		};
 	}
 
-	if (
-		typeof record.steam_id !== "string" ||
-		!STEAM_ID_PATTERN.test(record.steam_id)
-	) {
-		return { valid: false, error: "Steam ID must be exactly 17 digits" };
+	const email = typeof record.email === "string" ? record.email.trim() : "";
+	if (email.length > MAX_EMAIL_LENGTH || !EMAIL_PATTERN.test(email)) {
+		return { valid: false, error: "Enter a valid email address" };
 	}
 
-	return { valid: true, data: { name, steamId: record.steam_id } };
+	return { valid: true, data: { name, email } };
 }
 
 function clientIp(request: Request): string {
@@ -92,7 +92,7 @@ export function createPlaytestSignupPost(
 
 		const rateResult = rate(
 			clientIp(request),
-			`${validation.data.name}:${validation.data.steamId}`,
+			`${validation.data.name}:${validation.data.email}`,
 		);
 		if (!rateResult.allowed) {
 			return NextResponse.json(

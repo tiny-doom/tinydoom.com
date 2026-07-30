@@ -440,107 +440,12 @@ body {
 	}
 }
 
-.steam-id-help {
-	position: relative;
-	display: inline-block;
-}
-
-.steam-id-trigger {
-	cursor: help;
-	border: 0;
-	border-bottom: 2px dotted #905ea9;
-	background: transparent;
-	padding: 0;
-	color: #905ea9;
-	font: inherit;
-	font-weight: 700;
-	line-height: inherit;
-}
-
-.steam-id-trigger:focus-visible {
-	outline: 2px solid #a259ff;
-	outline-offset: 3px;
-}
-
-.steam-id-tooltip {
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	z-index: 30;
-	display: flex;
-	box-sizing: border-box;
-	visibility: hidden;
-	width: max-content;
-	max-width: min(620px, calc(100vw - 2rem));
-	flex-direction: column;
-	justify-content: center;
-	gap: 0.2rem;
-	border: 42px solid transparent;
-	border-image:
-		url("/art/hammerbound/tooltip-frame.png") 21 fill / 42px / 0 stretch;
-	padding: 0.35rem;
-	transform: translate(-50%, calc(-50% + 0.5rem));
-	opacity: 0;
-	color: #191219;
-	font-family: "Hammerbound Pixellari", sans-serif;
-	font-size: 1.2rem;
-	line-height: 1.25;
-	text-align: left;
-	-webkit-text-stroke: 0 transparent;
-	paint-order: normal;
-	filter: drop-shadow(4px 6px 0 rgb(20 8 32 / 35%));
-	image-rendering: pixelated;
-	transition:
-		opacity 120ms ease,
-		transform 120ms ease,
-		visibility 120ms;
-}
-
-.steam-id-tooltip strong {
-	color: #6e2727;
-	font-family: "Hammerbound Retrobit", sans-serif;
-	font-size: 1.35rem;
-}
-
-.steam-id-help:hover .steam-id-tooltip,
-.steam-id-help:focus-within .steam-id-tooltip {
-	visibility: visible;
-	transform: translate(-50%, -50%);
-	opacity: 1;
-}
-
-@media (max-width: 640px) {
-	.steam-id-tooltip {
-		position: fixed;
-		top: 50%;
-		bottom: auto;
-		left: 50%;
-		width: max-content;
-		max-width: calc(100vw - 2rem);
-		border-width: 30px;
-		border-image-width: 30px;
-		padding: 0.15rem;
-		transform: translate(-50%, calc(-50% + 0.5rem));
-		font-size: 0.7rem;
-	}
-
-	.steam-id-tooltip strong {
-		font-size: 0.82rem;
-	}
-
-	.steam-id-help:hover .steam-id-tooltip,
-	.steam-id-help:focus-within .steam-id-tooltip {
-		transform: translate(-50%, -50%);
-	}
-}
-
 @media (prefers-reduced-motion: reduce) {
 	.saucer-field {
 		display: none;
 	}
 
-	.void-star,
-	.steam-id-tooltip {
+	.void-star {
 		transition: none;
 		animation: none;
 	}

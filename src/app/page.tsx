@@ -18,13 +18,13 @@ export default function Home() {
 
 		const form = new FormData(event.currentTarget);
 		const name = String(form.get("name") ?? "").trim();
-		const steamId = String(form.get("steam_id") ?? "").trim();
+		const email = String(form.get("email") ?? "").trim();
 
 		try {
 			const response = await fetch("/api/playtest-signup", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ name, steam_id: steamId }),
+				body: JSON.stringify({ name, email }),
 			});
 			const result = (await response.json()) as {
 				error?: string | { message?: string };
@@ -87,48 +87,20 @@ export default function Home() {
 									className="letter-input postcard-input"
 								/>
 							</label>
-							<span className="postcard-compact-break">
-								and my{" "}
-								<span className="steam-id-help">
-									<button
-										type="button"
-										className="steam-id-trigger"
-										aria-describedby="steam-id-tooltip"
-										aria-label="Steam ID, how to find it"
-									>
-										Steam ID
-									</button>
-									<span
-										id="steam-id-tooltip"
-										role="tooltip"
-										className="steam-id-tooltip"
-									>
-										<strong>Finding your Steam ID</strong>
-										<span>1. Open Steam and click your username.</span>
-										<span>2. Choose Account details.</span>
-										<span>
-											3. Copy the 17-digit ID beneath your account name.
-										</span>
-									</span>
-								</span>{" "}
-								is
-							</span>
+							<span className="postcard-compact-break">and my email is</span>
 							<label className="block max-w-full">
-								<span className="sr-only">Your 17-digit Steam ID</span>
+								<span className="sr-only">Your email address</span>
 								<input
-									type="text"
-									name="steam_id"
-									inputMode="numeric"
+									type="email"
+									name="email"
+									inputMode="email"
 									autoComplete="off"
 									data-1p-ignore
 									data-lpignore="true"
 									data-bwignore
 									data-protonpass-ignore="true"
 									required
-									minLength={17}
-									maxLength={17}
-									pattern="[0-9]{17}"
-									title="Enter your 17-digit Steam ID"
+									maxLength={254}
 									className="letter-input postcard-input"
 								/>
 							</label>

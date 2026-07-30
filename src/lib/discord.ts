@@ -80,7 +80,7 @@ export async function postFeedbackMessage(
 
 export interface PlaytestSignupEmbed {
 	name: string;
-	steamId: string;
+	email: string;
 }
 
 export async function postPlaytestSignupMessage(
@@ -104,8 +104,8 @@ export async function postPlaytestSignupMessage(
 						fields: [
 							{ name: "🙋 Name", value: signup.name, inline: true },
 							{
-								name: "🎮 Steam ID",
-								value: `[${signup.steamId}](https://steamcommunity.com/profiles/${signup.steamId})`,
+								name: "📧 Email",
+								value: `[${signup.email}](mailto:${signup.email})`,
 								inline: true,
 							},
 						],
