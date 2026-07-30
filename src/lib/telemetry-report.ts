@@ -159,39 +159,82 @@ function formatMinutes(minutes: number): string {
 	return `${Math.floor(minutes / 60)}h ${minutes % 60}m`;
 }
 
+const MONTHS = [
+	"January",
+	"February",
+	"March",
+	"April",
+	"May",
+	"June",
+	"July",
+	"August",
+	"September",
+	"October",
+	"November",
+	"December",
+];
+
+const HAMMER_NAMES: Record<TelemetryHammer, string> = {
+	pennyroyal: "Pennyroyal",
+	crescendo: "Crescendo",
+	hex: "Hex",
+	wildfire: "Wildfire",
+	coup_de_grace: "Coup de Grâce",
+	singularity: "Singularity",
+};
+
+function formatReportRange(start: Date, end: Date): string {
+	const lastDay = new Date(end);
+	lastDay.setUTCDate(lastDay.getUTCDate() - 1);
+	const sameYear = start.getUTCFullYear() === lastDay.getUTCFullYear();
+	const sameMonth = sameYear && start.getUTCMonth() === lastDay.getUTCMonth();
+	if (sameMonth) {
+		return `${start.getUTCDate()}–${lastDay.getUTCDate()} ${MONTHS[start.getUTCMonth()]} ${start.getUTCFullYear()}`;
+	}
+	if (sameYear) {
+		return `${start.getUTCDate()} ${MONTHS[start.getUTCMonth()]}–${lastDay.getUTCDate()} ${MONTHS[lastDay.getUTCMonth()]} ${start.getUTCFullYear()}`;
+	}
+	return `${start.getUTCDate()} ${MONTHS[start.getUTCMonth()]} ${start.getUTCFullYear()}–${lastDay.getUTCDate()} ${MONTHS[lastDay.getUTCMonth()]} ${lastDay.getUTCFullYear()}`;
+}
+
+function formatFavoriteHammers(hammers: TelemetryHammer[]): string {
+	if (hammers.length === 0) return "No favorite yet";
+	return hammers.map((hammer) => HAMMER_NAMES[hammer]).join(" & ");
+}
+
 export function telemetryReportEmbed(
 	report: TelemetryReport,
 	start: Date,
 	end: Date,
 ) {
 	return {
-		title: "Hammerbound weekly telemetry",
-		color: 0xa259ff,
-		description: `${start.toISOString().slice(0, 10)} to ${end.toISOString().slice(0, 10)} UTC`,
+		title: "🔨 Hammerbound weekly report",
+		color: 0xfb6b1d,
+		description: formatReportRange(start, end),
 		fields: [
 			{
-				name: "Consent",
-				value: `${report.acceptedConsent} accepted, ${report.declinedConsent} declined`,
+				name: "🙋 Consent",
+				value: `${report.acceptedConsent} accepted · ${report.declinedConsent} declined`,
 				inline: true,
 			},
-			{ name: "Runs", value: String(report.runs), inline: true },
+			{ name: "⚒️ Runs forged", value: String(report.runs), inline: true },
 			{
-				name: "Marbles",
+				name: "🔴 Marbles earned",
 				value: BigInt(report.totalMarbles).toLocaleString("en-US"),
 				inline: true,
 			},
 			{
-				name: "Demos completed",
+				name: "🏁 Demos finished",
 				value: String(report.demosCompleted),
 				inline: true,
 			},
 			{
-				name: "Most-used hammer",
-				value: report.mostUsedHammers.join(", ") || "None",
+				name: "💖 Favorite hammer",
+				value: formatFavoriteHammers(report.mostUsedHammers),
 				inline: true,
 			},
 			{
-				name: "Playtime",
+				name: "⏱️ Playtime",
 				value: formatMinutes(report.playtimeMinutes),
 				inline: true,
 			},
@@ -199,10 +242,9 @@ export function telemetryReportEmbed(
 		...(report.excludedSessions > 0
 			? {
 					footer: {
-						text: `${report.excludedSessions} suspicious session(s) excluded`,
+						text: `🧹 ${report.excludedSessions} suspicious ${report.excludedSessions === 1 ? "session" : "sessions"} excluded`,
 					},
 				}
 			: {}),
-		timestamp: new Date().toISOString(),
 	};
 }

@@ -70,3 +70,15 @@ Fields and properties not listed above are rejected. The server stores its recei
 - `503`: temporary storage failure
 
 Clients retry transport failures and `5xx` responses. They do not retry `4xx` responses.
+
+## Weekly report
+
+Vercel posts the previous Monday through Sunday to Discord `#telemetry` every Monday at 09:00 UTC. The embed reports:
+
+- 🙋 accepted and declined consent
+- ⚒️ runs forged
+- 🔴 marbles earned
+- 🏁 demos finished
+- 💖 favorite hammer
+- ⏱️ playtime
+- 🧹 excluded suspicious sessions, when present

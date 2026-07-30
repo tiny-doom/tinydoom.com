@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import {
 	previousUtcWeek,
 	summarizeTelemetry,
+	telemetryReportEmbed,
 	type TelemetryReportEvent,
 } from "../src/lib/telemetry-report";
 
@@ -55,6 +56,46 @@ describe("weekly telemetry report", () => {
 			mostUsedHammers: ["hex"],
 			playtimeMinutes: 2,
 			excludedSessions: 0,
+		});
+	});
+
+	test("builds the friendly Discord embed", () => {
+		const embed = telemetryReportEmbed(
+			{
+				acceptedConsent: 12,
+				declinedConsent: 3,
+				runs: 45,
+				totalMarbles: "1234567",
+				demosCompleted: 8,
+				mostUsedHammers: ["coup_de_grace", "singularity"],
+				playtimeMinutes: 754,
+				excludedSessions: 1,
+			},
+			new Date("2026-07-20T00:00:00Z"),
+			new Date("2026-07-27T00:00:00Z"),
+		);
+
+		expect(embed).toEqual({
+			title: "🔨 Hammerbound weekly report",
+			color: 0xfb6b1d,
+			description: "20–26 July 2026",
+			fields: [
+				{
+					name: "🙋 Consent",
+					value: "12 accepted · 3 declined",
+					inline: true,
+				},
+				{ name: "⚒️ Runs forged", value: "45", inline: true },
+				{ name: "🔴 Marbles earned", value: "1,234,567", inline: true },
+				{ name: "🏁 Demos finished", value: "8", inline: true },
+				{
+					name: "💖 Favorite hammer",
+					value: "Coup de Grâce & Singularity",
+					inline: true,
+				},
+				{ name: "⏱️ Playtime", value: "12h 34m", inline: true },
+			],
+			footer: { text: "🧹 1 suspicious session excluded" },
 		});
 	});
 
