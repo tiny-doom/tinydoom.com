@@ -103,43 +103,74 @@ body {
 	image-rendering: pixelated;
 }
 
-.postcard-copy {
+.postcard-message {
 	display: flex;
 	width: 52%;
 	height: 100%;
 	flex-direction: column;
-	gap: clamp(0.25rem, 1.2vh, 0.75rem);
+	gap: clamp(0.5rem, 2vh, 1rem);
 	justify-content: flex-start;
-	font-size: clamp(0.833rem, calc(1.7vw + 0.333rem), 1.433rem);
+	padding-top: 1.375rem;
+	font-size: clamp(1rem, calc(2vw + 0.333rem), 1.683rem);
 	line-height: 1.35;
 	-webkit-text-stroke: 4pt #ebf3f8;
 	paint-order: stroke fill;
 }
 
-.postcard-input {
-	width: 100%;
-}
-
-.postcard-compact-break {
-	display: block;
-	margin-top: 0.25rem;
-}
-
-.letter-input {
-	border: 0;
-	border-bottom: 2px dashed #6e4c76;
-	background: transparent;
-	padding: 0 0.5rem;
+.postcard-field-label,
+.postcard-line-input {
+	position: absolute;
+	left: 55%;
+	width: 38%;
 	color: #38251f;
-	font: inherit;
-	line-height: 1.2;
+	font-family: "Hammerbound Pixellari", sans-serif;
+}
+
+.postcard-field-label {
+	font-size: clamp(1.35rem, calc(2.5vw + 0.25rem), 2.25rem);
+	line-height: 1;
+}
+
+.postcard-from-label {
+	top: 32%;
+	transform: translateY(-3px);
+}
+
+.postcard-email-label {
+	top: 64%;
+	transform: translateY(-6px);
+}
+
+.postcard-line-input {
+	height: 9%;
+	border: 0;
+	background: transparent;
+	padding: 0.5em 0.25rem 0;
+	font-size: clamp(0.95rem, calc(1.7vw + 0.2rem), 1.4rem);
+	line-height: 1;
 	text-align: left;
 	outline: none;
-	transition: border-color 150ms ease;
+	-webkit-text-stroke: 4pt #ebf3f8;
+	paint-order: stroke fill;
 }
 
-.letter-input:focus {
-	border-color: #a259ff;
+.postcard-name-input {
+	top: 40%;
+}
+
+.postcard-email-input {
+	top: 71%;
+}
+
+.postcard-line-input::placeholder {
+	color: #905ea9;
+	opacity: 0.65;
+	-webkit-text-stroke: 2pt #ebf3f8;
+}
+
+.postcard-line-input:focus-visible {
+	outline: 2px solid #905ea9;
+	outline-offset: 2px;
 }
 
 .hammerbound-confirm-button {
@@ -363,6 +394,11 @@ body {
 	width: 32px;
 	height: 32px;
 	place-items: center;
+	pointer-events: auto;
+	cursor: pointer;
+	border: 0;
+	background: transparent;
+	padding: 0;
 	opacity: 0;
 	animation-duration: var(--flight-duration, 46s);
 	animation-timing-function: linear;

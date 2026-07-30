@@ -33,5 +33,5 @@ The weekly Discord cron needs `CRON_SECRET`, `DISCORD_BOT_TOKEN`, and
 
 ## Playtesting
 
-The signup form posts validated names and email addresses to Discord. It needs
-`DISCORD_BOT_TOKEN` and `PLAYTEST_DISCORD_CHANNEL_ID`.
+`/test-hammerbound` posts validated names and email addresses to Discord. It
+needs `DISCORD_BOT_TOKEN` and `PLAYTEST_DISCORD_CHANNEL_ID`.
