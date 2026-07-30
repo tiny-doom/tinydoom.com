@@ -105,7 +105,7 @@ body {
 
 .postcard-copy {
 	display: flex;
-	width: 46%;
+	width: 52%;
 	height: 100%;
 	flex-direction: column;
 	gap: clamp(0.25rem, 1.2vh, 0.75rem);

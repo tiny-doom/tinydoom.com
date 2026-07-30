@@ -99,7 +99,7 @@ export async function postPlaytestSignupMessage(
 			body: JSON.stringify({
 				embeds: [
 					{
-						title: "💌 Hammerbound playtest signup",
+						title: "Hammerbound playtest signup",
 						color: 0xfb6b1d,
 						fields: [
 							{ name: "🙋 Name", value: signup.name, inline: true },
