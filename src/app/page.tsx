@@ -42,24 +42,24 @@ export default function Home() {
 	}
 
 	return (
-		<main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#2d1948] px-4 py-10 text-[#38251f] sm:px-8 sm:py-16">
+		<main className="relative flex h-dvh items-center justify-center overflow-hidden bg-[#2d1948] p-4 text-[#38251f]">
 			<StarField />
 			<SaucerField />
 
-			<div className="relative z-10 flex w-full max-w-[1071px] flex-col items-center gap-8">
+			<div className="postcard-stage relative z-10 flex flex-col items-center gap-4">
 				<form
 					id="playtest-signup-letter"
 					onSubmit={submitLetter}
 					className={`playtest-letter playtest-postcard relative w-full -rotate-[0.35deg] shadow-[0_28px_80px_rgba(15,3,20,0.55)] ${status === "sent" ? "postcard-whoosh" : ""}`}
 				>
-					<div className="relative space-y-8 text-2xl leading-[1.8] sm:text-3xl sm:leading-[1.9]">
+					<div className="postcard-copy relative">
 						<p>
 							Hi <strong>tiny doom</strong>!
 						</p>
 
 						<p>
 							I am a lovely person named{" "}
-							<label className="inline-block max-w-full align-baseline">
+							<label className="block max-w-full">
 								<span className="sr-only">Your name</span>
 								<input
 									type="text"
@@ -67,16 +67,10 @@ export default function Home() {
 									autoComplete="name"
 									required
 									maxLength={100}
-									className="letter-input w-[min(18rem,70vw)]"
+									className="letter-input postcard-input"
 								/>
 							</label>
 							.
-						</p>
-
-						<p>
-							I would just LOVE to playtest your game{" "}
-							<strong className="text-[#4a2b20]">Hammerbound</strong>. Can you
-							send me a key?
 						</p>
 
 						<p>
@@ -104,8 +98,8 @@ export default function Home() {
 									<code>76561198012345678</code>
 								</span>
 							</span>{" "}
-							is{" "}
-							<label className="inline-block max-w-full align-baseline">
+							is
+							<label className="block max-w-full">
 								<span className="sr-only">Your 17-digit Steam ID</span>
 								<input
 									type="text"
@@ -117,10 +111,16 @@ export default function Home() {
 									maxLength={17}
 									pattern="[0-9]{17}"
 									title="Enter your 17-digit Steam ID"
-									className="letter-input w-[min(22rem,70vw)]"
+									className="letter-input postcard-input"
 								/>
 							</label>
 							.
+						</p>
+
+						<p>
+							I would just l o v e to playtest your game{" "}
+							<strong className="text-[#4a2b20]">Hammerbound</strong>. Can you
+							send me a key?
 						</p>
 
 						<p>Thank you! {"<3"}</p>
