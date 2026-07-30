@@ -92,8 +92,25 @@ body {
 	height: 24px;
 	place-items: center;
 	opacity: 0.7;
+	transform-origin: center;
 	transition-property: opacity;
 	transition-timing-function: cubic-bezier(0.333333, 0, 0.666667, 1);
+	animation: void-star-drift 16s ease-in-out infinite alternate;
+}
+
+.void-star:nth-child(3n) {
+	animation-duration: 19s;
+	animation-delay: -7s;
+}
+
+.void-star:nth-child(3n + 1) {
+	animation-duration: 22s;
+	animation-delay: -13s;
+}
+
+.void-star:nth-child(3n + 2) {
+	animation-duration: 17s;
+	animation-delay: -4s;
 }
 
 .void-star-frame {
@@ -105,6 +122,15 @@ body {
 
 .void-star-twinkling {
 	animation: void-star-twinkle 1.6s linear;
+}
+
+@keyframes void-star-drift {
+	0% {
+		transform: translateY(-3px) rotate(-1.5deg);
+	}
+	100% {
+		transform: translateY(3px) rotate(1.5deg);
+	}
 }
 
 @keyframes void-star-twinkle {
