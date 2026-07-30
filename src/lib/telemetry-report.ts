@@ -98,16 +98,21 @@ export function summarizeTelemetry(
 
 	for (const event of events) {
 		if (event.name === "telemetry_consent") {
+			if (!event.consentChoice) throw new Error("Consent choice is missing");
 			if (event.consentChoice === "accepted") acceptedConsent++;
 			if (event.consentChoice === "declined") declinedConsent++;
 		}
 		if (event.name === "run_ended") {
+			if (event.marblesEarned === null) {
+				throw new Error("Run earnings are missing");
+			}
 			runs++;
-			totalMarbles += BigInt(event.marblesEarned ?? 0);
+			totalMarbles += BigInt(event.marblesEarned);
 		}
 		if (event.name === "demo_completed") demosCompleted++;
 		if (event.name === "session_heartbeat") playtimeMinutes++;
-		if (event.name === "run_started" && event.hammer) {
+		if (event.name === "run_started") {
+			if (!event.hammer) throw new Error("Run hammer is missing");
 			hammerCounts.set(event.hammer, (hammerCounts.get(event.hammer) ?? 0) + 1);
 		}
 	}

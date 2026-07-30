@@ -99,6 +99,12 @@ describe("weekly telemetry report", () => {
 		});
 	});
 
+	test("fails rather than publishing incomplete event data", () => {
+		expect(() => summarizeTelemetry([event("run_ended")])).toThrow(
+			"Run earnings are missing",
+		);
+	});
+
 	test("reports ties for most-used hammer", () => {
 		const report = summarizeTelemetry([
 			event("run_started", { hammer: "wildfire" }),
