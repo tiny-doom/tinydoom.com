@@ -102,6 +102,121 @@ body {
 	border-color: #a259ff;
 }
 
+.hammerbound-confirm-button {
+	min-width: 168px;
+	min-height: 54px;
+	cursor: pointer;
+	border: 12px solid transparent;
+	border-image:
+		url("/art/hammerbound/confirm-normal.png") 4 fill / 12px / 0 stretch;
+	background: transparent;
+	padding: 0.2rem 1.4rem;
+	color: #2e222f;
+	font-family: "Hammerbound Pixellari", sans-serif;
+	font-size: 1.5rem;
+	line-height: 1;
+	image-rendering: pixelated;
+}
+
+.hammerbound-confirm-button:hover:not(:disabled),
+.hammerbound-confirm-button:focus-visible:not(:disabled) {
+	border-image-source: url("/art/hammerbound/confirm-hover.png");
+}
+
+.hammerbound-confirm-button:active:not(:disabled) {
+	transform: translateY(3px);
+	border-image-source: url("/art/hammerbound/confirm-pressed.png");
+}
+
+.hammerbound-confirm-button:focus-visible {
+	outline: 3px solid #d8fcff;
+	outline-offset: 4px;
+}
+
+.hammerbound-confirm-button:disabled {
+	cursor: wait;
+	opacity: 0.7;
+}
+
+.send-controls {
+	display: flex;
+	min-height: 76px;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.send-controls-sent {
+	animation: send-controls-out 200ms ease forwards;
+}
+
+.send-error {
+	max-width: 36rem;
+	min-height: 1.5rem;
+	color: #ffd4e8;
+	font-family: "Hammerbound Pixellari", sans-serif;
+	font-size: 1rem;
+	text-align: center;
+}
+
+.postcard-whoosh {
+	animation: postcard-whoosh 750ms cubic-bezier(0.65, -0.15, 0.85, 0.35)
+		forwards;
+}
+
+.playtest-thank-you {
+	position: fixed;
+	z-index: 40;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	pointer-events: none;
+	opacity: 0;
+	color: #d8fcff;
+	font-family: "Hammerbound Retrobit", sans-serif;
+	font-size: clamp(3rem, 9vw, 8rem);
+	font-weight: 700;
+	text-align: center;
+	text-shadow: 5px 6px 0 rgb(14 5 24 / 45%);
+}
+
+.playtest-thank-you-visible {
+	animation: playtest-thank-you-in 700ms ease 420ms forwards;
+}
+
+@keyframes postcard-whoosh {
+	0% {
+		transform: rotate(-0.35deg) translate3d(0, 0, 0);
+		opacity: 1;
+	}
+	35% {
+		transform: rotate(3deg) translate3d(5vw, -2vh, 0);
+		opacity: 1;
+	}
+	100% {
+		transform: rotate(14deg) translate3d(130vw, -28vh, 0);
+		opacity: 0;
+	}
+}
+
+@keyframes send-controls-out {
+	to {
+		transform: translateY(0.5rem);
+		opacity: 0;
+	}
+}
+
+@keyframes playtest-thank-you-in {
+	from {
+		transform: scale(0.88);
+		opacity: 0;
+	}
+	to {
+		transform: scale(1);
+		opacity: 1;
+	}
+}
+
 .star-field {
 	position: fixed;
 	inset: 0;
@@ -275,11 +390,11 @@ body {
 .steam-id-trigger {
 	cursor: help;
 	border: 0;
-	border-bottom: 2px dotted #7b2eb0;
 	background: transparent;
 	padding: 0;
-	color: inherit;
+	color: #905ea9;
 	font: inherit;
+	font-weight: 700;
 	line-height: inherit;
 }
 
@@ -374,6 +489,21 @@ body {
 	.void-star,
 	.steam-id-tooltip {
 		transition: none;
+		animation: none;
+	}
+
+	.postcard-whoosh {
+		visibility: hidden;
+		animation: none;
+	}
+
+	.send-controls-sent {
+		visibility: hidden;
+		animation: none;
+	}
+
+	.playtest-thank-you-visible {
+		opacity: 1;
 		animation: none;
 	}
 }
