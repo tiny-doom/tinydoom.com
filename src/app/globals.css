@@ -228,7 +228,7 @@ body {
 
 @keyframes postcard-whoosh {
 	0% {
-		transform: rotate(-0.35deg) translate3d(0, 0, 0);
+		transform: rotate(0deg) translate3d(0, 0, 0);
 		opacity: 1;
 	}
 	35% {
@@ -486,11 +486,6 @@ body {
 	font-size: 1.35rem;
 }
 
-.steam-id-tooltip code {
-	color: #6e2727;
-	font-size: 1rem;
-}
-
 .steam-id-help:hover .steam-id-tooltip,
 .steam-id-help:focus-within .steam-id-tooltip {
 	visibility: visible;
@@ -515,10 +510,6 @@ body {
 
 	.steam-id-tooltip strong {
 		font-size: 0.82rem;
-	}
-
-	.steam-id-tooltip code {
-		font-size: 0.68rem;
 	}
 
 	.steam-id-help:hover .steam-id-tooltip,

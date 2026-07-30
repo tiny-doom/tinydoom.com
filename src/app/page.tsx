@@ -63,7 +63,7 @@ export default function Home() {
 					data-lpignore="true"
 					data-bwignore
 					data-protonpass-ignore="true"
-					className={`playtest-letter playtest-postcard relative w-full -rotate-[0.35deg] ${status === "sent" ? "postcard-whoosh" : ""}`}
+					className={`playtest-letter playtest-postcard relative w-full ${status === "sent" ? "postcard-whoosh" : ""}`}
 				>
 					<div className="postcard-copy relative">
 						<p>
@@ -111,7 +111,6 @@ export default function Home() {
 									<span>
 										3. Copy the 17-digit ID beneath your account name.
 									</span>
-									<code>76561198012345678</code>
 								</span>
 							</span>{" "}
 							is
