@@ -76,7 +76,7 @@ describe("weekly telemetry report", () => {
 		);
 
 		expect(embed).toEqual({
-			title: "🔨 Hammerbound weekly report",
+			title: "Hammerbound weekly report",
 			color: 0xfb6b1d,
 			description: "20–26 July 2026",
 			fields: [

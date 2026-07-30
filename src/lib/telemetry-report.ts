@@ -208,7 +208,7 @@ export function telemetryReportEmbed(
 	end: Date,
 ) {
 	return {
-		title: "🔨 Hammerbound weekly report",
+		title: "Hammerbound weekly report",
 		color: 0xfb6b1d,
 		description: formatReportRange(start, end),
 		fields: [
