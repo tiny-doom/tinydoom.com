@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { type FormEvent, useState } from "react";
 import { SaucerField } from "./saucer-field";
 import { StarField } from "./star-field";
@@ -45,14 +46,12 @@ export default function Home() {
 			<StarField />
 			<SaucerField />
 
-			<div className="relative z-10 flex w-full max-w-4xl flex-col items-center gap-8">
+			<div className="relative z-10 flex w-full max-w-[1071px] flex-col items-center gap-8">
 				<form
 					id="playtest-signup-letter"
 					onSubmit={submitLetter}
-					className={`playtest-letter relative w-full -rotate-[0.35deg] bg-[#fffdf8] px-6 py-10 shadow-[0_28px_80px_rgba(15,3,20,0.55),8px_10px_0_rgba(20,8,32,0.38)] sm:px-14 sm:py-16 lg:px-20 lg:py-20 ${status === "sent" ? "postcard-whoosh" : ""}`}
+					className={`playtest-letter playtest-postcard relative w-full -rotate-[0.35deg] shadow-[0_28px_80px_rgba(15,3,20,0.55)] ${status === "sent" ? "postcard-whoosh" : ""}`}
 				>
-					<div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_25%_20%,rgba(130,98,64,0.06),transparent_30%),radial-gradient(circle_at_75%_80%,rgba(130,98,64,0.05),transparent_35%)]" />
-
 					<div className="relative space-y-8 text-2xl leading-[1.8] sm:text-3xl sm:leading-[1.9]">
 						<p>
 							Hi <strong>tiny doom</strong>!
@@ -146,7 +145,13 @@ export default function Home() {
 
 				{status === "sent" && (
 					<output className="playtest-thank-you playtest-thank-you-visible">
-						Thank you!
+						<Image
+							src="/art/hammerbound/thank-you.png"
+							alt="Thank you!"
+							width={381}
+							height={81}
+							unoptimized
+						/>
 					</output>
 				)}
 			</div>

@@ -85,6 +85,17 @@ body {
 	font-weight: 400;
 }
 
+.playtest-postcard {
+	box-sizing: border-box;
+	min-height: min(720px, calc((100vw - 2rem) * 240 / 357));
+	aspect-ratio: 357 / 240;
+	background-image: url("/art/tiny-doom/postcard.png");
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	padding: clamp(2rem, 6vw, 5rem);
+	image-rendering: pixelated;
+}
+
 .letter-input {
 	border: 0;
 	border-bottom: 2px solid #6e4c76;
@@ -172,12 +183,12 @@ body {
 	place-items: center;
 	pointer-events: none;
 	opacity: 0;
-	color: #d8fcff;
-	font-family: "Hammerbound Retrobit", sans-serif;
-	font-size: clamp(3rem, 9vw, 8rem);
-	font-weight: 700;
-	text-align: center;
-	text-shadow: 5px 6px 0 rgb(14 5 24 / 45%);
+}
+
+.playtest-thank-you img {
+	width: min(381px, calc(100vw - 2rem));
+	height: auto;
+	image-rendering: pixelated;
 }
 
 .playtest-thank-you-visible {
