@@ -120,11 +120,9 @@ body {
 	width: 100%;
 }
 
-.postcard-followup {
+.postcard-compact-break {
 	display: block;
 	margin-top: 0.25rem;
-	font-size: 0.7em;
-	-webkit-text-stroke-width: 2pt;
 }
 
 .letter-input {
@@ -221,10 +219,23 @@ body {
 	opacity: 0;
 }
 
+.playtest-thank-you-content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1rem;
+}
+
 .playtest-thank-you img {
 	width: min(381px, calc(100vw - 2rem));
 	height: auto;
 	image-rendering: pixelated;
+}
+
+.playtest-thank-you-followup {
+	color: #d8fcff;
+	font-family: "Hammerbound Pixellari", sans-serif;
+	font-size: clamp(1rem, 3vw, 1.5rem);
 }
 
 .playtest-thank-you-visible {

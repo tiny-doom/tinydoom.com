@@ -87,30 +87,32 @@ export default function Home() {
 									className="letter-input postcard-input"
 								/>
 							</label>
-							and my{" "}
-							<span className="steam-id-help">
-								<button
-									type="button"
-									className="steam-id-trigger"
-									aria-describedby="steam-id-tooltip"
-									aria-label="Steam ID, how to find it"
-								>
-									Steam ID
-								</button>
-								<span
-									id="steam-id-tooltip"
-									role="tooltip"
-									className="steam-id-tooltip"
-								>
-									<strong>Finding your Steam ID</strong>
-									<span>1. Open Steam and click your username.</span>
-									<span>2. Choose Account details.</span>
-									<span>
-										3. Copy the 17-digit ID beneath your account name.
+							<span className="postcard-compact-break">
+								and my{" "}
+								<span className="steam-id-help">
+									<button
+										type="button"
+										className="steam-id-trigger"
+										aria-describedby="steam-id-tooltip"
+										aria-label="Steam ID, how to find it"
+									>
+										Steam ID
+									</button>
+									<span
+										id="steam-id-tooltip"
+										role="tooltip"
+										className="steam-id-tooltip"
+									>
+										<strong>Finding your Steam ID</strong>
+										<span>1. Open Steam and click your username.</span>
+										<span>2. Choose Account details.</span>
+										<span>
+											3. Copy the 17-digit ID beneath your account name.
+										</span>
 									</span>
-								</span>
-							</span>{" "}
-							is
+								</span>{" "}
+								is
+							</span>
 							<label className="block max-w-full">
 								<span className="sr-only">Your 17-digit Steam ID</span>
 								<input
@@ -139,12 +141,7 @@ export default function Home() {
 							Can you send me a key?
 						</p>
 
-						<p>
-							Thank you! {"<3"}
-							<small className="postcard-followup">
-								We will contact you soon!
-							</small>
-						</p>
+						<p>Thank you! {"<3"}</p>
 					</div>
 				</form>
 
@@ -178,13 +175,18 @@ export default function Home() {
 
 				{status === "sent" && (
 					<output className="playtest-thank-you playtest-thank-you-visible">
-						<Image
-							src="/art/hammerbound/thank-you.png"
-							alt="Thank you!"
-							width={381}
-							height={81}
-							unoptimized
-						/>
+						<span className="playtest-thank-you-content">
+							<Image
+								src="/art/hammerbound/thank-you.png"
+								alt="Thank you!"
+								width={381}
+								height={81}
+								unoptimized
+							/>
+							<span className="playtest-thank-you-followup">
+								We will contact you soon!
+							</span>
+						</span>
 					</output>
 				)}
 			</div>
