@@ -42,7 +42,7 @@ export default function Home() {
 	}
 
 	return (
-		<main className="relative flex h-dvh items-center justify-center overflow-hidden bg-[#2d1948] p-4 text-[#38251f]">
+		<main className="relative flex h-dvh items-center justify-center overflow-hidden bg-[linear-gradient(180deg,#2d1948_0%,#0b2865_100%)] p-4 text-[#38251f]">
 			<StarField />
 			<SaucerField />
 
