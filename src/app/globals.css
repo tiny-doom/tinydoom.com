@@ -432,6 +432,7 @@ body {
 .steam-id-trigger {
 	cursor: help;
 	border: 0;
+	border-bottom: 2px dotted #905ea9;
 	background: transparent;
 	padding: 0;
 	color: #905ea9;
@@ -443,12 +444,6 @@ body {
 .steam-id-trigger:focus-visible {
 	outline: 2px solid #a259ff;
 	outline-offset: 3px;
-}
-
-.steam-id-hint {
-	margin-left: 0.08em;
-	font-size: 0.55em;
-	vertical-align: super;
 }
 
 .steam-id-tooltip {
