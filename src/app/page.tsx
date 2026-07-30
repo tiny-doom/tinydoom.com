@@ -137,8 +137,9 @@ export default function Home() {
 
 						<p>
 							I would love to playtest your game{" "}
-							<strong className="text-[#4a2b20]">Hammerbound</strong>. Can you
-							send me a key?
+							<strong className="text-[#4a2b20]">Hammerbound</strong>.
+							<br />
+							Can you send me a key?
 						</p>
 
 						<p>Thank you! {"<3"}</p>

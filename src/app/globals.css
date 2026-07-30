@@ -149,6 +149,7 @@ body {
 		url("/art/hammerbound/confirm-normal-large.png") center / 100% 100%
 		no-repeat;
 	padding: 0 10px;
+	filter: drop-shadow(8px 10px 0 rgb(25 18 25 / 40%));
 	image-rendering: pixelated;
 }
 
