@@ -98,7 +98,8 @@ body {
 	background-size: 100% 100%;
 	background-repeat: no-repeat;
 	padding: clamp(0.75rem, 3vw, 2rem);
-	box-shadow: 8px 10px 0 #160d24;
+	border-radius: clamp(4px, 1.4vw, 10px);
+	filter: drop-shadow(8px 10px 0 rgb(25 18 25 / 20%));
 	image-rendering: pixelated;
 }
 
@@ -138,21 +139,25 @@ body {
 
 .hammerbound-confirm-button {
 	display: inline-flex;
-	width: min(252px, calc(100vw - 2rem));
-	min-height: 81px;
+	width: min(176px, calc(100vw - 2rem));
+	min-height: 57px;
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
-	border: 18px solid transparent;
+	border: 13px solid transparent;
 	border-image:
-		url("/art/hammerbound/confirm-normal.png") 4 fill / 18px / 0 stretch;
+		url("/art/hammerbound/confirm-normal.png") 4 fill / 13px / 0 stretch;
 	background: transparent;
-	padding: 0.3rem 2.1rem;
+	padding: 0 1.4rem;
 	color: #2e222f;
 	font-family: "Hammerbound Pixellari", sans-serif;
-	font-size: 2.25rem;
+	font-size: 1.575rem;
 	line-height: 1;
 	image-rendering: pixelated;
+}
+
+.hammerbound-confirm-label {
+	transform: translateY(-0.08em);
 }
 
 .hammerbound-confirm-button:hover:not(:disabled),
