@@ -26,9 +26,17 @@ export default function Home() {
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ name, steam_id: steamId }),
 			});
-			const result = (await response.json()) as { error?: string };
+			const result = (await response.json()) as {
+				error?: string | { message?: string };
+			};
 			if (!response.ok) {
-				throw new Error(result.error ?? "Your letter could not be sent.");
+				const responseError =
+					response.status === 429
+						? "Too many letters sent. Please try again later."
+						: typeof result.error === "string"
+							? result.error
+							: result.error?.message;
+				throw new Error(responseError ?? "Your letter could not be sent.");
 			}
 			setStatus("sent");
 		} catch (submissionError) {

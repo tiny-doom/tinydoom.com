@@ -112,7 +112,7 @@ body {
 	justify-content: flex-start;
 	font-size: clamp(0.833rem, calc(1.7vw + 0.333rem), 1.433rem);
 	line-height: 1.35;
-	-webkit-text-stroke: 2px #ebf3f8;
+	-webkit-text-stroke: 4pt #ebf3f8;
 	paint-order: stroke fill;
 }
 
@@ -144,9 +144,9 @@ body {
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
-	border: 13px solid transparent;
+	border: 8px solid transparent;
 	border-image:
-		url("/art/hammerbound/confirm-normal.png") 4 fill / 13px / 0 stretch;
+		url("/art/hammerbound/confirm-normal.png") 4 fill / 8px / 0 stretch;
 	background: transparent;
 	padding: 0 1.4rem;
 	color: #2e222f;
@@ -157,7 +157,7 @@ body {
 }
 
 .hammerbound-confirm-label {
-	transform: translateY(-0.08em);
+	transform: translateY(0.24em);
 }
 
 .hammerbound-confirm-button:hover:not(:disabled),
