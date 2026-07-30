@@ -9,6 +9,22 @@
 		format("woff2");
 }
 
+@font-face {
+	font-family: "Hammerbound Pixellari";
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url("/fonts/pixellari.ttf") format("truetype");
+}
+
+@font-face {
+	font-family: "Hammerbound Retrobit";
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url("/fonts/retrobit.ttf") format("truetype");
+}
+
 :root {
 	--background: #18171b;
 	--foreground: #a259ff;
@@ -58,6 +74,15 @@ body {
 	100% {
 		background-position: 60% 60%;
 	}
+}
+
+.playtest-letter {
+	font-family: "Hammerbound Pixellari", sans-serif;
+}
+
+.playtest-letter strong {
+	font-family: "Hammerbound Retrobit", sans-serif;
+	font-weight: 400;
 }
 
 .letter-input {
@@ -151,6 +176,101 @@ body {
 	}
 }
 
+.saucer-field {
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+	overflow: hidden;
+}
+
+.flying-saucer {
+	position: absolute;
+	display: grid;
+	width: 32px;
+	height: 32px;
+	place-items: center;
+	opacity: 0;
+	animation-duration: var(--flight-duration, 46s);
+	animation-timing-function: linear;
+	animation-iteration-count: infinite;
+	animation-fill-mode: both;
+}
+
+.flying-saucer-right {
+	animation-name: saucer-fly-right;
+}
+
+.flying-saucer-left {
+	animation-name: saucer-fly-left;
+}
+
+.flying-saucer-sprite {
+	display: block;
+	width: 32px;
+	height: 32px;
+	background-image: url("/art/blackstar/flying-saucers.png");
+	background-repeat: no-repeat;
+	background-size: 64px 64px;
+	image-rendering: pixelated;
+	animation: saucer-flicker 0.1666667s steps(1, end) infinite;
+}
+
+.saucer-blue {
+	background-position-x: 0;
+	filter: drop-shadow(0 0 3px #71dcff)
+		drop-shadow(0 0 6px rgb(113 220 255 / 45%));
+}
+
+.saucer-pink {
+	background-position-x: -32px;
+	filter: drop-shadow(0 0 3px #ff72cf)
+		drop-shadow(0 0 6px rgb(255 114 207 / 45%));
+}
+
+@keyframes saucer-flicker {
+	0%,
+	49.999% {
+		background-position-y: 0;
+	}
+	50%,
+	100% {
+		background-position-y: -32px;
+	}
+}
+
+@keyframes saucer-fly-right {
+	0% {
+		transform: translate3d(-64px, 0, 0);
+		opacity: 0;
+	}
+	2%,
+	29% {
+		opacity: 0.85;
+	}
+	31%,
+	100% {
+		transform: translate3d(calc(100vw + 64px), var(--flight-rise, 0), 0);
+		opacity: 0;
+	}
+}
+
+@keyframes saucer-fly-left {
+	0% {
+		transform: translate3d(calc(100vw + 64px), 0, 0);
+		opacity: 0;
+	}
+	2%,
+	29% {
+		opacity: 0.85;
+	}
+	31%,
+	100% {
+		transform: translate3d(-64px, var(--flight-rise, 0), 0);
+		opacity: 0;
+	}
+}
+
 .steam-id-help {
 	position: relative;
 	display: inline-block;
@@ -173,27 +293,27 @@ body {
 }
 
 .steam-id-tooltip {
-	position: absolute;
-	bottom: calc(100% + 0.25rem);
+	position: fixed;
+	top: 50%;
 	left: 50%;
 	z-index: 30;
 	display: flex;
 	box-sizing: border-box;
 	visibility: hidden;
-	width: 380px;
+	width: 760px;
 	max-width: calc(100vw - 2rem);
 	flex-direction: column;
 	justify-content: center;
 	gap: 0.2rem;
-	border: 42px solid transparent;
+	border: 84px solid transparent;
 	border-image:
-		url("/art/hammerbound/tooltip-frame.png") 21 fill / 42px / 0 stretch;
-	padding: 0.25rem;
-	transform: translate(-50%, 0.5rem);
+		url("/art/hammerbound/tooltip-frame.png") 21 fill / 84px / 0 stretch;
+	padding: 0.5rem;
+	transform: translate(-50%, calc(-50% + 0.5rem));
 	opacity: 0;
 	color: #191219;
-	font-family: "IM Fell DW Pica", serif;
-	font-size: 0.88rem;
+	font-family: "Hammerbound Pixellari", sans-serif;
+	font-size: 1.6rem;
 	line-height: 1.25;
 	text-align: left;
 	filter: drop-shadow(4px 6px 0 rgb(20 8 32 / 35%));
@@ -206,18 +326,19 @@ body {
 
 .steam-id-tooltip strong {
 	color: #6e2727;
-	font-size: 1rem;
+	font-family: "Hammerbound Retrobit", sans-serif;
+	font-size: 1.8rem;
 }
 
 .steam-id-tooltip code {
 	color: #6e2727;
-	font-size: 0.8rem;
+	font-size: 1.35rem;
 }
 
 .steam-id-help:hover .steam-id-tooltip,
 .steam-id-help:focus-within .steam-id-tooltip {
 	visibility: visible;
-	transform: translate(-50%, 0);
+	transform: translate(-50%, -50%);
 	opacity: 1;
 }
 
@@ -228,9 +349,19 @@ body {
 		bottom: auto;
 		left: 50%;
 		width: min(380px, calc(100vw - 2rem));
+		border-width: 42px;
+		border-image-width: 42px;
 		padding: 0.15rem;
 		transform: translate(-50%, calc(-50% + 0.5rem));
 		font-size: 0.78rem;
+	}
+
+	.steam-id-tooltip strong {
+		font-size: 1rem;
+	}
+
+	.steam-id-tooltip code {
+		font-size: 0.8rem;
 	}
 
 	.steam-id-help:hover .steam-id-tooltip,
@@ -240,6 +371,10 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+	.saucer-field {
+		display: none;
+	}
+
 	.void-star,
 	.steam-id-tooltip {
 		transition: none;

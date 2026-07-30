@@ -44,6 +44,18 @@ const STARS: StarDefinition[] = [
 	{ left: 73, top: 31, color: 3, variant: "small" },
 	{ left: 22, top: 61, color: 0, variant: "twinkle" },
 	{ left: 81, top: 62, color: 5, variant: "small" },
+	{ left: 9, top: 35, color: 2, variant: "small" },
+	{ left: 14, top: 58, color: 5, variant: "small" },
+	{ left: 35, top: 27, color: 3, variant: "large" },
+	{ left: 44, top: 8, color: 0, variant: "small" },
+	{ left: 58, top: 20, color: 2, variant: "twinkle" },
+	{ left: 86, top: 24, color: 5, variant: "small" },
+	{ left: 93, top: 44, color: 3, variant: "small" },
+	{ left: 87, top: 82, color: 0, variant: "large" },
+	{ left: 70, top: 75, color: 2, variant: "small" },
+	{ left: 55, top: 79, color: 5, variant: "small" },
+	{ left: 39, top: 67, color: 3, variant: "twinkle" },
+	{ left: 8, top: 68, color: 0, variant: "small" },
 ];
 
 const FRAME_RECTS: Record<StarFrame, (color: number) => number[]> = {
