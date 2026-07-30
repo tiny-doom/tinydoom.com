@@ -89,6 +89,23 @@ function VoidStar({ star }: { star: StarDefinition }) {
 			return;
 		}
 
+		const driftDuration = randomBetween(8, 13);
+		outer.style.setProperty("--drift-duration", `${driftDuration}s`);
+		outer.style.setProperty(
+			"--drift-delay",
+			`${-randomBetween(0, driftDuration)}s`,
+		);
+		outer.style.setProperty(
+			"--drift-distance",
+			`${randomBetween(2, 5).toFixed(2)}px`,
+		);
+		outer.style.setProperty(
+			"--drift-rotation",
+			`${randomBetween(0.75, 2).toFixed(2)}deg`,
+		);
+		outer.style.animationDirection =
+			Math.random() < 0.5 ? "alternate" : "alternate-reverse";
+
 		const wander = () => {
 			const duration = randomBetween(...STAR_DURATION_SECONDS);
 			outer.style.transitionDuration = `${duration}s`;
