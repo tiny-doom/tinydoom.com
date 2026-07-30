@@ -218,14 +218,10 @@ body {
 
 .saucer-blue {
 	background-position-x: 0;
-	filter: drop-shadow(0 0 3px #71dcff)
-		drop-shadow(0 0 6px rgb(113 220 255 / 45%));
 }
 
 .saucer-pink {
 	background-position-x: -32px;
-	filter: drop-shadow(0 0 3px #ff72cf)
-		drop-shadow(0 0 6px rgb(255 114 207 / 45%));
 }
 
 @keyframes saucer-flicker {
