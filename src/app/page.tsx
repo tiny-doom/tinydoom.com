@@ -42,7 +42,7 @@ export default function Home() {
 	}
 
 	return (
-		<main className="relative flex h-dvh items-center justify-center overflow-hidden bg-[linear-gradient(180deg,#2d1948_0%,#2d1948_65%,#0b2865_100%)] p-4 text-[#38251f]">
+		<main className="relative flex h-dvh items-center justify-center overflow-hidden bg-[linear-gradient(180deg,#2d1948_0%,#0b2865_100%)] p-4 text-[#38251f]">
 			<StarField />
 			<SaucerField />
 
@@ -129,7 +129,7 @@ export default function Home() {
 						</p>
 
 						<p>
-							I would just l o v e to playtest your game{" "}
+							I would love to playtest your game{" "}
 							<strong className="text-[#4a2b20]">Hammerbound</strong>. Can you
 							send me a key?
 						</p>
