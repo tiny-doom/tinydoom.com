@@ -103,17 +103,17 @@ body {
 }
 
 .hammerbound-confirm-button {
-	min-width: 168px;
-	min-height: 54px;
+	width: min(336px, calc(100vw - 2rem));
+	min-height: 108px;
 	cursor: pointer;
-	border: 12px solid transparent;
+	border: 24px solid transparent;
 	border-image:
-		url("/art/hammerbound/confirm-normal.png") 4 fill / 12px / 0 stretch;
+		url("/art/hammerbound/confirm-normal.png") 4 fill / 24px / 0 stretch;
 	background: transparent;
-	padding: 0.2rem 1.4rem;
+	padding: 0.4rem 2.8rem;
 	color: #2e222f;
 	font-family: "Hammerbound Pixellari", sans-serif;
-	font-size: 1.5rem;
+	font-size: 3rem;
 	line-height: 1;
 	image-rendering: pixelated;
 }
@@ -401,6 +401,12 @@ body {
 .steam-id-trigger:focus-visible {
 	outline: 2px solid #a259ff;
 	outline-offset: 3px;
+}
+
+.steam-id-hint {
+	margin-left: 0.08em;
+	font-size: 0.55em;
+	vertical-align: super;
 }
 
 .steam-id-tooltip {

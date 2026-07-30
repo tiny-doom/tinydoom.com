@@ -87,8 +87,9 @@ export default function Home() {
 									type="button"
 									className="steam-id-trigger"
 									aria-describedby="steam-id-tooltip"
+									aria-label="Steam ID, how to find it"
 								>
-									Steam ID
+									Steam ID<sup className="steam-id-hint">*</sup>
 								</button>
 								<span
 									id="steam-id-tooltip"
