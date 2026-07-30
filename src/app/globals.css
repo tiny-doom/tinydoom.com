@@ -99,7 +99,7 @@ body {
 	background-repeat: no-repeat;
 	padding: clamp(0.75rem, 3vw, 2rem);
 	border-radius: clamp(4px, 1.4vw, 10px);
-	filter: drop-shadow(8px 10px 0 rgb(25 18 25 / 20%));
+	filter: drop-shadow(8px 10px 0 rgb(25 18 25 / 40%));
 	image-rendering: pixelated;
 }
 
