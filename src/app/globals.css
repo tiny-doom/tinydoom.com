@@ -157,7 +157,7 @@ body {
 }
 
 .hammerbound-confirm-label {
-	transform: translateY(0.24em);
+	transform: translateY(0.14em);
 }
 
 .hammerbound-confirm-button:hover:not(:disabled),
