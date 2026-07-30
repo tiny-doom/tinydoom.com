@@ -23,8 +23,11 @@ export const TELEMETRY_HAMMERS = [
 	"singularity",
 ] as const;
 
+export const TELEMETRY_PLATFORMS = ["Windows", "macOS", "Linux"] as const;
+
 export type TelemetryEventName = (typeof TELEMETRY_EVENT_NAMES)[number];
 export type TelemetryHammer = (typeof TELEMETRY_HAMMERS)[number];
+export type TelemetryPlatform = (typeof TELEMETRY_PLATFORMS)[number];
 export type TelemetryConsentChoice = "accepted" | "declined";
 
 export interface TelemetryEvent {
@@ -41,7 +44,7 @@ export interface TelemetryEvent {
 export interface TelemetryPayload {
 	game: "Hammerbound";
 	version: string;
-	platform: "Windows";
+	platform: TelemetryPlatform;
 	install_id?: string;
 	events: TelemetryEvent[];
 }
@@ -54,6 +57,7 @@ const VERSION_PATTERN = /^[0-9A-Za-z][0-9A-Za-z.+-]{0,31}$/;
 const INSTALL_ID_PATTERN = /^[0-9a-f]{32}$/;
 const UPGRADE_ID_PATTERN = /^[a-z][a-z0-9_]{0,63}$/;
 const HAMMERS = new Set<string>(TELEMETRY_HAMMERS);
+const PLATFORMS = new Set<string>(TELEMETRY_PLATFORMS);
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -150,7 +154,8 @@ export function validateTelemetryPayload(
 	if (!hasExactKeys(value, allowedKeys)) return { valid: false };
 	if (
 		value.game !== "Hammerbound" ||
-		value.platform !== "Windows" ||
+		typeof value.platform !== "string" ||
+		!PLATFORMS.has(value.platform) ||
 		typeof value.version !== "string" ||
 		!VERSION_PATTERN.test(value.version) ||
 		!Array.isArray(value.events) ||
@@ -191,7 +196,7 @@ export function validateTelemetryPayload(
 		data: {
 			game: "Hammerbound",
 			version: value.version,
-			platform: "Windows",
+			platform: value.platform as TelemetryPlatform,
 			...(typeof value.install_id === "string"
 				? { install_id: value.install_id }
 				: {}),

@@ -10,7 +10,11 @@ import {
 	timestamp,
 	varchar,
 } from "drizzle-orm/pg-core";
-import { TELEMETRY_EVENT_NAMES, TELEMETRY_HAMMERS } from "@/lib/telemetry";
+import {
+	TELEMETRY_EVENT_NAMES,
+	TELEMETRY_HAMMERS,
+	TELEMETRY_PLATFORMS,
+} from "@/lib/telemetry";
 
 export const feedback = pgTable("feedback", {
 	id: serial("id").primaryKey(),
@@ -44,7 +48,10 @@ export const telemetryConsentChoice = pgEnum("telemetry_consent_choice", [
 export const telemetryRunOutcome = pgEnum("telemetry_run_outcome", [
 	"finished",
 ]);
-export const telemetryPlatform = pgEnum("telemetry_platform", ["Windows"]);
+export const telemetryPlatform = pgEnum(
+	"telemetry_platform",
+	TELEMETRY_PLATFORMS,
+);
 
 export const telemetryEvents = pgTable(
 	"telemetry_events",

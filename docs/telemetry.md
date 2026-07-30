@@ -51,7 +51,7 @@ The anonymous decline is the only request without `install_id`. It must contain 
 - body: 16 KiB
 - events per batch: 1 to 20
 - `game`: `Hammerbound`
-- `platform`: `Windows`
+- `platform`: `Windows`, `macOS`, or `Linux`
 - `version`: 1 to 32 ASCII letters, digits, `.`, `+`, or `-`
 - `install_id`: 32 lowercase hexadecimal characters
 - `marbles_earned`: integer from zero through `Number.MAX_SAFE_INTEGER`

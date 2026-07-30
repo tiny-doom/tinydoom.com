@@ -8,6 +8,13 @@
       "when": 1785408602823,
       "tag": "0000_add_telemetry",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1785436711563,
+      "tag": "0001_expand_telemetry_platforms",
+      "breakpoints": true
     }
   ]
 }

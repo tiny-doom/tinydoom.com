@@ -3,6 +3,7 @@ import { createTelemetryPost } from "../src/app/api/telemetry/route";
 import {
 	MAX_TELEMETRY_BODY_BYTES,
 	TELEMETRY_HAMMERS,
+	TELEMETRY_PLATFORMS,
 	type TelemetryPayload,
 	validateTelemetryPayload,
 } from "../src/lib/telemetry";
@@ -38,6 +39,17 @@ describe("telemetry contract", () => {
 			),
 		);
 		expect(result.valid).toBe(true);
+	});
+
+	test("accepts every shipped platform", () => {
+		for (const platform of TELEMETRY_PLATFORMS) {
+			expect(
+				validateTelemetryPayload({
+					...payload([{ name: "session_started", properties: {} }]),
+					platform,
+				}).valid,
+			).toBe(true);
+		}
 	});
 
 	test("accepts every event and its exact properties", () => {
@@ -139,7 +151,7 @@ describe("telemetry contract", () => {
 		expect(
 			validateTelemetryPayload({
 				...payload([{ name: "session_started", properties: {} }]),
-				platform: "Linux",
+				platform: "Android",
 			}).valid,
 		).toBe(false);
 		expect(
