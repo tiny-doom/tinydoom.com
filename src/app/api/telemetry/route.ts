@@ -23,6 +23,26 @@ function eventColumns(event: TelemetryPayload["events"][number]) {
 				hammer: event.properties.hammer,
 				outcome: event.properties.outcome,
 				marblesEarned: event.properties.marbles_earned,
+				...(event.properties.purchased_upgrade_points === undefined
+					? {}
+					: {
+							purchasedUpgradePoints: event.properties.purchased_upgrade_points,
+							upgradePoints: event.properties.upgrade_points,
+							availableUpgrades: event.properties.available_upgrades,
+							cheapestAvailableUpgradeCost:
+								event.properties.cheapest_available_upgrade_cost,
+							startingMarbleBalance: event.properties.starting_marble_balance,
+							durationSeconds: event.properties.duration_seconds,
+							runDurationSeconds: event.properties.run_duration_seconds,
+							goodStrikes: event.properties.good_strikes,
+							badStrikes: event.properties.bad_strikes,
+							swordsFixed: event.properties.swords_fixed,
+							swordsBroken: event.properties.swords_broken,
+							peakPayoutMultiplier: event.properties.peak_payout_multiplier,
+							averagePayoutMultiplier:
+								event.properties.average_payout_multiplier,
+							upgradeValueEarned: event.properties.upgrade_value_earned,
+						}),
 			};
 		case "upgrade_purchased":
 			return { upgradeId: event.properties.upgrade_id };

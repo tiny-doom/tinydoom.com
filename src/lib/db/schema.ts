@@ -3,8 +3,10 @@ import {
 	bigserial,
 	index,
 	integer,
+	jsonb,
 	pgEnum,
 	pgTable,
+	real,
 	serial,
 	text,
 	timestamp,
@@ -66,6 +68,25 @@ export const telemetryEvents = pgTable(
 		hammer: telemetryHammer("hammer"),
 		outcome: telemetryRunOutcome("outcome"),
 		marblesEarned: bigint("marbles_earned", { mode: "number" }),
+		purchasedUpgradePoints: integer("purchased_upgrade_points"),
+		upgradePoints: jsonb("upgrade_points").$type<Record<string, number>>(),
+		availableUpgrades:
+			jsonb("available_upgrades").$type<{ id: string; cost: number }[]>(),
+		cheapestAvailableUpgradeCost: bigint("cheapest_available_upgrade_cost", {
+			mode: "number",
+		}),
+		startingMarbleBalance: bigint("starting_marble_balance", {
+			mode: "number",
+		}),
+		durationSeconds: real("duration_seconds"),
+		runDurationSeconds: real("run_duration_seconds"),
+		goodStrikes: integer("good_strikes"),
+		badStrikes: integer("bad_strikes"),
+		swordsFixed: integer("swords_fixed"),
+		swordsBroken: integer("swords_broken"),
+		peakPayoutMultiplier: real("peak_payout_multiplier"),
+		averagePayoutMultiplier: real("average_payout_multiplier"),
+		upgradeValueEarned: real("upgrade_value_earned"),
 		upgradeId: varchar("upgrade_id", { length: 64 }),
 		receivedAt: timestamp("received_at", { withTimezone: true })
 			.defaultNow()

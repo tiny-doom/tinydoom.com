@@ -121,23 +121,44 @@ export async function postPlaytestSignupMessage(
 
 export async function postTelemetryReportMessage(
 	embed: Record<string, unknown>,
+	chart?: Uint8Array,
 ): Promise<void> {
 	const channelId = process.env.TELEMETRY_DISCORD_CHANNEL_ID;
 	if (!channelId) {
 		throw new Error("TELEMETRY_DISCORD_CHANNEL_ID is not configured");
 	}
 
-	const response = await fetch(
-		`${DISCORD_API}/channels/${channelId}/messages`,
-		{
-			method: "POST",
-			headers: botHeaders(),
-			body: JSON.stringify({ embeds: [embed] }),
-		},
-	);
+	const response = chart
+		? await postTelemetryReportWithChart(channelId, embed, chart)
+		: await fetch(`${DISCORD_API}/channels/${channelId}/messages`, {
+				method: "POST",
+				headers: botHeaders(),
+				body: JSON.stringify({ embeds: [embed] }),
+			});
 	if (!response.ok) {
 		throw new Error(`Discord telemetry report failed with ${response.status}`);
 	}
+}
+
+async function postTelemetryReportWithChart(
+	channelId: string,
+	embed: Record<string, unknown>,
+	chart: Uint8Array,
+): Promise<Response> {
+	const form = new FormData();
+	form.append("payload_json", JSON.stringify({ embeds: [embed] }));
+	const image = new Uint8Array(chart.byteLength);
+	image.set(chart);
+	form.append(
+		"files[0]",
+		new Blob([image.buffer as ArrayBuffer], { type: "image/png" }),
+		"hammerbound-upgrade-progression.png",
+	);
+	return fetch(`${DISCORD_API}/channels/${channelId}/messages`, {
+		method: "POST",
+		headers: { Authorization: botHeaders().Authorization },
+		body: form,
+	});
 }
 
 export async function deleteMessage(messageId: string): Promise<boolean> {

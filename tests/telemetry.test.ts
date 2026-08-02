@@ -88,6 +88,36 @@ describe("telemetry contract", () => {
 		expect(result.valid).toBe(true);
 	});
 
+	test("accepts a completed run snapshot, including a zero-safe ratio", () => {
+		const result = validateTelemetryPayload(
+			payload([
+				{
+					name: "run_ended",
+					properties: {
+						hammer: "pennyroyal",
+						outcome: "finished",
+						marbles_earned: 0,
+						purchased_upgrade_points: 8,
+						upgrade_points: { copper_orders: 1 },
+						available_upgrades: [{ id: "shiny_copper", cost: 50 }],
+						cheapest_available_upgrade_cost: 50,
+						starting_marble_balance: 0,
+						duration_seconds: 45.2,
+						run_duration_seconds: 45,
+						good_strikes: 0,
+						bad_strikes: 2,
+						swords_fixed: 0,
+						swords_broken: 1,
+						peak_payout_multiplier: 1,
+						average_payout_multiplier: 0,
+						upgrade_value_earned: 0,
+					},
+				},
+			]),
+		);
+		expect(result.valid).toBe(true);
+	});
+
 	test("enforces the batch cap", () => {
 		const heartbeat = { name: "session_heartbeat", properties: {} };
 		expect(

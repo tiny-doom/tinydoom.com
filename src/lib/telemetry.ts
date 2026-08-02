@@ -30,6 +30,28 @@ export type TelemetryHammer = (typeof TELEMETRY_HAMMERS)[number];
 export type TelemetryPlatform = (typeof TELEMETRY_PLATFORMS)[number];
 export type TelemetryConsentChoice = "accepted" | "declined";
 
+export interface TelemetryAvailableUpgrade {
+	id: string;
+	cost: number;
+}
+
+export interface TelemetryRunSnapshot {
+	purchased_upgrade_points: number;
+	upgrade_points: Record<string, number>;
+	available_upgrades: TelemetryAvailableUpgrade[];
+	cheapest_available_upgrade_cost: number;
+	starting_marble_balance: number;
+	duration_seconds: number;
+	run_duration_seconds: number;
+	good_strikes: number;
+	bad_strikes: number;
+	swords_fixed: number;
+	swords_broken: number;
+	peak_payout_multiplier: number;
+	average_payout_multiplier: number;
+	upgrade_value_earned: number | null;
+}
+
 export interface TelemetryEvent {
 	name: TelemetryEventName;
 	properties: {
@@ -38,6 +60,20 @@ export interface TelemetryEvent {
 		outcome?: "finished";
 		marbles_earned?: number;
 		upgrade_id?: string;
+		purchased_upgrade_points?: number;
+		upgrade_points?: Record<string, number>;
+		available_upgrades?: TelemetryAvailableUpgrade[];
+		cheapest_available_upgrade_cost?: number;
+		starting_marble_balance?: number;
+		duration_seconds?: number;
+		run_duration_seconds?: number;
+		good_strikes?: number;
+		bad_strikes?: number;
+		swords_fixed?: number;
+		swords_broken?: number;
+		peak_payout_multiplier?: number;
+		average_payout_multiplier?: number;
+		upgrade_value_earned?: number | null;
 	};
 }
 
@@ -61,6 +97,41 @@ const PLATFORMS = new Set<string>(TELEMETRY_PLATFORMS);
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isNonNegativeInteger(value: unknown): value is number {
+	return typeof value === "number" && Number.isSafeInteger(value) && value >= 0;
+}
+
+function isNonNegativeNumber(value: unknown): value is number {
+	return typeof value === "number" && Number.isFinite(value) && value >= 0;
+}
+
+function isUpgradePoints(value: unknown): value is Record<string, number> {
+	return (
+		isRecord(value) &&
+		Object.entries(value).every(
+			([id, points]) =>
+				UPGRADE_ID_PATTERN.test(id) && isNonNegativeInteger(points),
+		)
+	);
+}
+
+function isAvailableUpgrades(
+	value: unknown,
+): value is TelemetryAvailableUpgrade[] {
+	return (
+		Array.isArray(value) &&
+		value.every(
+			(upgrade) =>
+				isRecord(upgrade) &&
+				hasExactKeys(upgrade, ["cost", "id"]) &&
+				typeof upgrade.id === "string" &&
+				UPGRADE_ID_PATTERN.test(upgrade.id) &&
+				isNonNegativeInteger(upgrade.cost) &&
+				upgrade.cost > 0,
+		)
+	);
 }
 
 function hasExactKeys(
@@ -109,20 +180,57 @@ function validateEvent(value: unknown): TelemetryEvent | null {
 				return null;
 			}
 			break;
-		case "run_ended":
+		case "run_ended": {
+			const baseRunKeys = ["hammer", "marbles_earned", "outcome"];
+			const snapshotKeys = [
+				...baseRunKeys,
+				"average_payout_multiplier",
+				"available_upgrades",
+				"bad_strikes",
+				"cheapest_available_upgrade_cost",
+				"duration_seconds",
+				"good_strikes",
+				"peak_payout_multiplier",
+				"purchased_upgrade_points",
+				"run_duration_seconds",
+				"starting_marble_balance",
+				"swords_broken",
+				"swords_fixed",
+				"upgrade_points",
+				"upgrade_value_earned",
+			];
 			if (
-				!hasExactKeys(properties, ["hammer", "marbles_earned", "outcome"]) ||
 				typeof properties.hammer !== "string" ||
 				!HAMMERS.has(properties.hammer) ||
 				properties.outcome !== "finished" ||
-				typeof properties.marbles_earned !== "number" ||
-				!Number.isSafeInteger(properties.marbles_earned) ||
-				properties.marbles_earned < 0 ||
+				!isNonNegativeInteger(properties.marbles_earned) ||
 				properties.marbles_earned > MAX_MARBLES_EARNED
 			) {
 				return null;
 			}
+			if (hasExactKeys(properties, baseRunKeys)) break;
+			if (
+				!hasExactKeys(properties, snapshotKeys) ||
+				!isNonNegativeInteger(properties.purchased_upgrade_points) ||
+				!isUpgradePoints(properties.upgrade_points) ||
+				!isAvailableUpgrades(properties.available_upgrades) ||
+				!isNonNegativeInteger(properties.cheapest_available_upgrade_cost) ||
+				!isNonNegativeInteger(properties.starting_marble_balance) ||
+				!isNonNegativeNumber(properties.duration_seconds) ||
+				!isNonNegativeNumber(properties.run_duration_seconds) ||
+				!isNonNegativeInteger(properties.good_strikes) ||
+				!isNonNegativeInteger(properties.bad_strikes) ||
+				!isNonNegativeInteger(properties.swords_fixed) ||
+				!isNonNegativeInteger(properties.swords_broken) ||
+				!isNonNegativeNumber(properties.peak_payout_multiplier) ||
+				!isNonNegativeNumber(properties.average_payout_multiplier) ||
+				(properties.upgrade_value_earned !== null &&
+					!isNonNegativeNumber(properties.upgrade_value_earned))
+			) {
+				return null;
+			}
 			break;
+		}
 		case "upgrade_purchased":
 			if (
 				!hasExactKeys(properties, ["upgrade_id"]) ||

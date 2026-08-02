@@ -18,6 +18,20 @@ function event(
 		consentChoice: null,
 		hammer: null,
 		marblesEarned: null,
+		purchasedUpgradePoints: null,
+		upgradePoints: null,
+		availableUpgrades: null,
+		cheapestAvailableUpgradeCost: null,
+		startingMarbleBalance: null,
+		durationSeconds: null,
+		runDurationSeconds: null,
+		goodStrikes: null,
+		badStrikes: null,
+		swordsFixed: null,
+		swordsBroken: null,
+		peakPayoutMultiplier: null,
+		averagePayoutMultiplier: null,
+		upgradeValueEarned: null,
 		...overrides,
 	};
 }
@@ -48,61 +62,141 @@ describe("weekly telemetry report", () => {
 		]);
 
 		expect(report).toEqual({
+			activePlayers: 1,
 			acceptedConsent: 1,
 			declinedConsent: 1,
 			runs: 1,
 			totalMarbles: "125",
 			demosCompleted: 1,
+			averageRunsToPrestige: null,
+			averageForgeMinutesToPrestige: null,
 			mostUsedHammers: ["hex"],
 			playtimeMinutes: 2,
 			excludedSessions: 0,
+			progressionGraph: [],
+			progressionEras: [],
 		});
 	});
 
-	test("builds the friendly Discord embed", () => {
+	test("builds the weekly stats embed", () => {
 		const embed = telemetryReportEmbed(
 			{
-				acceptedConsent: 12,
-				declinedConsent: 3,
+				activePlayers: 12,
+				acceptedConsent: 2,
+				declinedConsent: 1,
 				runs: 45,
 				totalMarbles: "1234567",
 				demosCompleted: 8,
-				mostUsedHammers: ["coup_de_grace", "singularity"],
+				averageRunsToPrestige: 42,
+				averageForgeMinutesToPrestige: 55.5,
+				mostUsedHammers: ["singularity"],
 				playtimeMinutes: 754,
-				excludedSessions: 1,
+				excludedSessions: 0,
+				progressionGraph: [],
+				progressionEras: [],
 			},
 			new Date("2026-07-20T00:00:00Z"),
 			new Date("2026-07-27T00:00:00Z"),
 		);
-
-		expect(embed).toEqual({
-			title: "Hammerbound weekly report",
-			color: 0xfb6b1d,
+		expect(embed).toMatchObject({
+			title: "Hammerbound telemetry report",
 			description: "20–26 July 2026",
-			fields: [
-				{
-					name: "🙋 Consent",
-					value: "12 accepted · 3 declined",
-					inline: true,
-				},
+			fields: expect.arrayContaining([
+				{ name: "👥 Players", value: "12", inline: true },
 				{ name: "⚒️ Runs forged", value: "45", inline: true },
-				{ name: "🔴 Marbles earned", value: "1,234,567", inline: true },
-				{ name: "🏁 Demos finished", value: "8", inline: true },
 				{
-					name: "💖 Favorite hammer",
-					value: "Coup de Grâce & Singularity",
+					name: "⏱️ First prestige",
+					value: "42.0 runs · 55.5 forge minutes",
 					inline: true,
 				},
-				{ name: "⏱️ Playtime", value: "12h 34m", inline: true },
-			],
-			footer: { text: "🧹 1 suspicious session excluded" },
+			]),
 		});
+	});
+
+	test("measures a complete first-prestige playthrough", () => {
+		const report = summarizeTelemetry([
+			event("run_ended", {
+				marblesEarned: 100,
+				purchasedUpgradePoints: 2,
+				durationSeconds: 40,
+			}),
+			event("run_ended", {
+				marblesEarned: 200,
+				purchasedUpgradePoints: 4,
+				durationSeconds: 50,
+			}),
+			event("demo_completed"),
+		]);
+		expect(report.averageRunsToPrestige).toBe(2);
+		expect(report.averageForgeMinutesToPrestige).toBe(1.5);
+	});
+
+	test("ignores prestige journeys that began before the report range", () => {
+		const report = summarizeTelemetry([
+			event("run_ended", {
+				marblesEarned: 100,
+				purchasedUpgradePoints: 12,
+				durationSeconds: 40,
+			}),
+			event("demo_completed"),
+		]);
+		expect(report.averageRunsToPrestige).toBeNull();
+		expect(report.averageForgeMinutesToPrestige).toBeNull();
 	});
 
 	test("fails rather than publishing incomplete event data", () => {
 		expect(() => summarizeTelemetry([event("run_ended")])).toThrow(
 			"Run earnings are missing",
 		);
+	});
+
+	test("graphs progression and explains outliers", () => {
+		const report = summarizeTelemetry([
+			event("run_ended", {
+				hammer: "hex",
+				upgradePoints: { copper_orders: 1 },
+				marblesEarned: 100,
+				purchasedUpgradePoints: 4,
+				availableUpgrades: [{ id: "shiny_copper", cost: 100 }],
+				startingMarbleBalance: 0,
+				durationSeconds: 45,
+				goodStrikes: 8,
+				badStrikes: 2,
+				swordsFixed: 3,
+				swordsBroken: 1,
+				peakPayoutMultiplier: 5,
+				averagePayoutMultiplier: 2.5,
+				upgradeValueEarned: 1,
+			}),
+			event("run_ended", {
+				hammer: "wildfire",
+				upgradePoints: { steelsmithing: 1 },
+				marblesEarned: 20,
+				purchasedUpgradePoints: 4,
+				availableUpgrades: [{ id: "shiny_copper", cost: 100 }],
+				startingMarbleBalance: 10,
+				durationSeconds: 30,
+				goodStrikes: 1,
+				badStrikes: 5,
+				swordsFixed: 1,
+				swordsBroken: 4,
+				peakPayoutMultiplier: 1,
+				averagePayoutMultiplier: 1,
+				upgradeValueEarned: 0.2,
+			}),
+		]);
+		expect(report.progressionEras).toEqual([
+			{ label: "Copper", purchasedUpgradePoints: 4 },
+			{ label: "Steel", purchasedUpgradePoints: 4 },
+		]);
+		expect(report.progressionGraph).toEqual([
+			{
+				purchasedUpgradePoints: 4,
+				runs: 2,
+				averageRatio: 0.6,
+				outliers: [expect.objectContaining({ hammer: "wildfire", ratio: 0.2 })],
+			},
+		]);
 	});
 
 	test("reports ties for most-used hammer", () => {
